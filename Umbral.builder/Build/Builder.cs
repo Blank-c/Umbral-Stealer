@@ -144,7 +144,7 @@ namespace Umbral.builder.Build
 
                 Renamer renamer = new Renamer(assembly);
                 if (!renamer.Perform())
-                    textBox.AppendText("Renaming Failed!");
+                    textBox.AppendText("\r\nRenaming Failed!");
                 assembly.Write(tempFile);
 
                 #endregion
