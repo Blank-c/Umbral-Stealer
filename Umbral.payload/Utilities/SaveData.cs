@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -136,6 +137,22 @@ Token: {token}
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                }
+            }
+        }
+
+        internal static void SaveToFile(Dictionary<string, Bitmap> images, string folderPath)
+        {
+            foreach (KeyValuePair<string, Bitmap> image in images)
+            {
+                try
+                {
+                    string filePath = Path.Combine(folderPath, $"{image.Key}.png");
+                    image.Value.Save(filePath, ImageFormat.Png);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
                 }
             }
         }

