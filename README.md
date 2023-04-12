@@ -15,7 +15,7 @@ The author of this program is not liable for any damage, harm, or legal conseque
 ## Features
 - Captures Passwords from 10+ Browsers.
 - Captures Cookies from 10+ Browsers.
-- Captures Discord Cookies.
+- Captures Discord Tokens.
 - Captures Roblox Cookies.
 - Captures Minecraft Session Files.
 - Captures Machine Info.
