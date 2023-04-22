@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Umbral.builder.Build;
 
 namespace Umbral.builder.User_Controls
@@ -23,7 +24,7 @@ namespace Umbral.builder.User_Controls
             tooltip.SetToolTip(BuildButton, "Build the stub.");
         }
 
-        private void BuildButton_Click(object sender, System.EventArgs e)
+        private void BuildButton_Click(object sender, EventArgs e)
         {
             Button buildButton = (Button)sender;
             if (buildButton.Text.Equals(BuildButtonEnabledPlaceHolder))
@@ -34,7 +35,7 @@ namespace Umbral.builder.User_Controls
                     MessageBox.Show("Enable at least one of the stealing targets!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-                
+
                 if (GeneralTab.IsWebhookValid)
                 {
 
@@ -101,7 +102,7 @@ namespace Umbral.builder.User_Controls
             OutputTextBox.AppendText("\r\nReady...");
         }
 
-        private void IconSelectButton_Click(object sender, System.EventArgs e)
+        private void IconSelectButton_Click(object sender, EventArgs e)
         {
             Button iconButton = (Button)sender;
             if (iconButton.Text.Equals(IconButtonEnabledPlaceHolder))
@@ -123,7 +124,8 @@ namespace Umbral.builder.User_Controls
                 _iconPath = openFileDialog.FileName;
                 iconButton.Text = IconButtonSelectedPlaceHolder;
                 OutputTextBox.AppendText("\r\nSelected icon.");
-            } else if (iconButton.Text.Equals(IconButtonSelectedPlaceHolder))
+            }
+            else if (iconButton.Text.Equals(IconButtonSelectedPlaceHolder))
             {
                 _iconPath = string.Empty;
                 iconButton.Text = IconButtonEnabledPlaceHolder;
@@ -131,7 +133,7 @@ namespace Umbral.builder.User_Controls
             }
         }
 
-        private void OutputTextBox_TextChanged(object sender, System.EventArgs e)
+        private void OutputTextBox_TextChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
             textBox.SelectionStart = textBox.Text.Length;

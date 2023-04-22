@@ -22,8 +22,8 @@
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
+        /// <summary>
+        /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -33,13 +33,14 @@
             // 
             // label1
             // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 72F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(108, 167);
+            this.label1.Location = new System.Drawing.Point(135, 167);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(416, 108);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 1;
             this.label1.Text = "SOON...";
             // 
             // Soon
@@ -52,7 +53,6 @@
             this.Size = new System.Drawing.Size(667, 477);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

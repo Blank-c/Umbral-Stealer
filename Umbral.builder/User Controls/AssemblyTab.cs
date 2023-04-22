@@ -30,13 +30,13 @@ namespace Umbral.builder.User_Controls
             InitializeComponent();
         }
 
-        private void TextBox_TextChanged(object sender, System.EventArgs e)
+        private void TextBox_TextChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
 
-            if(textBox.Equals(companyNameTextField))
+            if (textBox.Equals(companyNameTextField))
                 CompanyNameInfo = textBox.Text;
-            else if(textBox.Equals(fileDescriptionTextField))
+            else if (textBox.Equals(fileDescriptionTextField))
                 FileDescriptionInfo = textBox.Text;
             else if (textBox.Equals(productNameTextField))
                 ProductNameInfo = textBox.Text;
@@ -74,7 +74,7 @@ namespace Umbral.builder.User_Controls
                 OriginalFilenameInfo = textBox.Text;
         }
 
-        private void VersionField_TextChanged(object sender, System.EventArgs e)
+        private void VersionField_TextChanged(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
             textBox.Text = new string(textBox.Text.Where(char.IsDigit).ToArray());

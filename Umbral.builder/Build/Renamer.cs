@@ -1,25 +1,19 @@
 ﻿// https://github.com/quasar/Quasar/blob/master/Quasar.Server/Build/Renamer.cs
 
-using Mono.Cecil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Mono.Cecil;
 
 namespace Umbral.builder.Build
 {
     public class Renamer
     {
-        /// <summary>
-        /// Contains the assembly definition.
-        /// </summary>
-        public AssemblyDefinition AsmDef { get; set; }
-
-        private int Length { get; set; }
-        private MemberOverloader _typeOverloader;
-        private Dictionary<TypeDefinition, MemberOverloader> _methodOverloaders;
-        private Dictionary<TypeDefinition, MemberOverloader> _fieldOverloaders;
-        private Dictionary<TypeDefinition, MemberOverloader> _eventOverloaders;
+        private readonly Dictionary<TypeDefinition, MemberOverloader> _eventOverloaders;
+        private readonly Dictionary<TypeDefinition, MemberOverloader> _fieldOverloaders;
+        private readonly Dictionary<TypeDefinition, MemberOverloader> _methodOverloaders;
+        private readonly MemberOverloader _typeOverloader;
 
         public Renamer(AssemblyDefinition asmDef)
             : this(asmDef, 20)
@@ -28,16 +22,23 @@ namespace Umbral.builder.Build
 
         public Renamer(AssemblyDefinition asmDef, int length)
         {
-            this.AsmDef = asmDef;
-            this.Length = length;
-            _typeOverloader = new MemberOverloader(this.Length);
+            AsmDef = asmDef;
+            Length = length;
+            _typeOverloader = new MemberOverloader(Length);
             _methodOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
             _fieldOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
             _eventOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
         }
 
         /// <summary>
-        /// Attempts to modify the assembly definition data.
+        ///     Contains the assembly definition.
+        /// </summary>
+        public AssemblyDefinition AsmDef { get; set; }
+
+        private int Length { get; }
+
+        /// <summary>
+        ///     Attempts to modify the assembly definition data.
         /// </summary>
         /// <returns>True if the operation succeeded; False if the operation failed.</returns>
         public bool Perform()
@@ -48,6 +49,7 @@ namespace Umbral.builder.Build
                 {
                     RenameInType(typeDef);
                 }
+
                 return true;
             }
             catch
@@ -75,9 +77,9 @@ namespace Umbral.builder.Build
 
             if (typeDef.HasMethods)
                 foreach (MethodDefinition methodDef in
-                        typeDef.Methods.Where(methodDef =>
-                                !methodDef.IsConstructor && !methodDef.HasCustomAttributes &&
-                                !methodDef.IsAbstract && !methodDef.IsVirtual))
+                         typeDef.Methods.Where(methodDef =>
+                             !methodDef.IsConstructor && !methodDef.HasCustomAttributes &&
+                             !methodDef.IsAbstract && !methodDef.IsVirtual))
                     methodOverloader.GiveName(methodDef);
 
             if (typeDef.HasFields)
@@ -91,38 +93,37 @@ namespace Umbral.builder.Build
 
         private MemberOverloader GetMethodOverloader(TypeDefinition typeDef)
         {
-            return GetOverloader(this._methodOverloaders, typeDef);
+            return GetOverloader(_methodOverloaders, typeDef);
         }
 
         private MemberOverloader GetFieldOverloader(TypeDefinition typeDef)
         {
-            return GetOverloader(this._fieldOverloaders, typeDef);
+            return GetOverloader(_fieldOverloaders, typeDef);
         }
 
         private MemberOverloader GetEventOverloader(TypeDefinition typeDef)
         {
-            return GetOverloader(this._eventOverloaders, typeDef);
+            return GetOverloader(_eventOverloaders, typeDef);
         }
 
         private MemberOverloader GetOverloader(Dictionary<TypeDefinition, MemberOverloader> overloaderDictionary,
-            TypeDefinition targetTypeDef)
+                                               TypeDefinition targetTypeDef)
         {
             MemberOverloader overloader;
             if (!overloaderDictionary.TryGetValue(targetTypeDef, out overloader))
             {
-                overloader = new MemberOverloader(this.Length);
+                overloader = new MemberOverloader(Length);
                 overloaderDictionary.Add(targetTypeDef, overloader);
             }
+
             return overloader;
         }
 
         private class MemberOverloader
         {
-            private bool DoRandom { get; set; }
-            private int StartingLength { get; set; }
-            private readonly Dictionary<string, string> _renamedMembers = new Dictionary<string, string>();
             private readonly char[] _charMap;
             private readonly Random _random = new Random();
+            private readonly Dictionary<string, string> _renamedMembers = new Dictionary<string, string>();
             private int[] _indices;
 
             public MemberOverloader(int startingLength, bool doRandom = true)
@@ -132,11 +133,14 @@ namespace Umbral.builder.Build
 
             private MemberOverloader(int startingLength, bool doRandom, char[] chars)
             {
-                this._charMap = chars;
-                this.DoRandom = doRandom;
-                this.StartingLength = startingLength;
-                this._indices = new int[startingLength];
+                _charMap = chars;
+                DoRandom = doRandom;
+                StartingLength = startingLength;
+                _indices = new int[startingLength];
             }
+
+            private bool DoRandom { get; }
+            private int StartingLength { get; }
 
             public void GiveName(MemberReference member)
             {
@@ -147,6 +151,7 @@ namespace Umbral.builder.Build
                 {
                     member.Name = GetCurrentName();
                 }
+
                 _renamedMembers.Add(originalName, member.ToString());
             }
 

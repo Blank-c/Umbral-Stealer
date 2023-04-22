@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -52,7 +54,7 @@ namespace Umbral.payload.Handlers
     // By default, GetBitmap() returns image of System.Drawing.Bitmap.
     // If WPF, define 'USBCAMERA_WPF' symbol that makes GetBitmap() returns image of BitmapSource.
 
-    class UsbCamera
+    internal class UsbCamera
     {
         /// <summary>Usb camera image size.</summary>
         public Size Size { get; private set; }
@@ -77,7 +79,13 @@ namespace Umbral.payload.Handlers
         /// <remarks>Immediately after starting, fails because image buffer is not prepared yet.</remarks>
         public Func<Bitmap> GetBitmap { get; private set; }
 
-        public enum StreamType { Capture, Preview, Still }
+        public enum StreamType
+        {
+            Capture,
+            Preview,
+            Still
+        }
+
         private Dictionary<StreamType, SampleGrabberCallback> Streams = new Dictionary<StreamType, SampleGrabberCallback>();
 
         /// <summary>
@@ -93,8 +101,8 @@ namespace Umbral.payload.Handlers
         /// <remarks>called by worker thread.</remarks>
         public Action<Bitmap> StillImageCaptured
         {
-            get { return Streams[StreamType.Still].Buffered; }
-            set { Streams[StreamType.Still].Buffered = value; }
+            get => Streams[StreamType.Still].Buffered;
+            set => Streams[StreamType.Still].Buffered = value;
         }
 
         /// <summary>
@@ -134,7 +142,10 @@ namespace Umbral.payload.Handlers
         }
 
         /// <summary>Set preview size.</summary>
-        public void SetPreviewSize(Size size) { SetPreviewSizeMain(size); }
+        public void SetPreviewSize(Size size)
+        {
+            SetPreviewSizeMain(size);
+        }
 
         /// <summary>
         /// Get available USB camera list.
@@ -150,8 +161,8 @@ namespace Umbral.payload.Handlers
         /// </summary>
         public static VideoFormat[] GetVideoFormat(int cameraIndex)
         {
-            var filter = DirectShow.CreateFilter(DirectShow.DsGuid.CLSID_VideoInputDeviceCategory, cameraIndex);
-            var pin = DirectShow.FindPin(filter, 0, DirectShow.PIN_DIRECTION.PINDIR_OUTPUT);
+            DirectShow.IBaseFilter filter = DirectShow.CreateFilter(DirectShow.DsGuid.CLSID_VideoInputDeviceCategory, cameraIndex);
+            DirectShow.IPin pin = DirectShow.FindPin(filter, 0, DirectShow.PIN_DIRECTION.PINDIR_OUTPUT);
             return GetVideoOutputFormat(pin);
         }
 
@@ -179,7 +190,7 @@ namespace Umbral.payload.Handlers
         /// </param>
         public UsbCamera(int cameraIndex, VideoFormat format)
         {
-            var camera_list = FindDevices();
+            string[] camera_list = FindDevices();
             if (cameraIndex >= camera_list.Length) throw new ArgumentException("USB camera is not available.", "cameraIndex");
             Init(cameraIndex, format);
         }
@@ -190,14 +201,14 @@ namespace Umbral.payload.Handlers
             // Create Filter Graph
             //----------------------------------
 
-            var graph = DirectShow.CreateGraph();
-            var builder = DirectShow.CoCreateInstance(DirectShow.DsGuid.CLSID_CaptureGraphBuilder2) as DirectShow.ICaptureGraphBuilder2;
+            DirectShow.IGraphBuilder graph = DirectShow.CreateGraph();
+            DirectShow.ICaptureGraphBuilder2 builder = DirectShow.CoCreateInstance(DirectShow.DsGuid.CLSID_CaptureGraphBuilder2) as DirectShow.ICaptureGraphBuilder2;
             builder.SetFiltergraph(graph);
 
             //----------------------------------
             // VideoCaptureSource
             //----------------------------------
-            var vcap_source = CreateVideoCaptureSource(index, format);
+            DirectShow.IBaseFilter vcap_source = CreateVideoCaptureSource(index, format);
             graph.AddFilter(vcap_source, "VideoCapture");
 
             // PIN_CATEGORY_CAPTURE
@@ -208,11 +219,15 @@ namespace Umbral.payload.Handlers
             // +--------------------+  +----------------+  +---------------+
             //                                 ↓GetBitmap()
             {
-                var sample = ConnectSampleGrabberAndRenderer(graph, builder, vcap_source, DirectShow.DsGuid.PIN_CATEGORY_CAPTURE);
+                SampleGrabberInfo sample = ConnectSampleGrabberAndRenderer(graph, builder, vcap_source, DirectShow.DsGuid.PIN_CATEGORY_CAPTURE);
                 if (sample != null)
                 {
                     // release when finish.
-                    Released += () => { var i_grabber = sample.Grabber; DirectShow.ReleaseInstance(ref i_grabber); };
+                    Released += () =>
+                    {
+                        DirectShow.ISampleGrabber i_grabber = sample.Grabber;
+                        DirectShow.ReleaseInstance(ref i_grabber);
+                    };
 
                     Size = new Size(sample.Width, sample.Height);
 
@@ -227,9 +242,10 @@ namespace Umbral.payload.Handlers
                     }*/
 
                     GetBitmap = GetBitmapFromSampleGrabberCallback(sample.Grabber, sample.Width, sample.Height, sample.Stride);
+
                     Func<Bitmap> GetBitmapFromSampleGrabberCallback(DirectShow.ISampleGrabber grabber, int width, int height, int stride)
                     {
-                        var sampler = new SampleGrabberCallback(grabber, width, height, stride, false);
+                        SampleGrabberCallback sampler = new SampleGrabberCallback(grabber, width, height, stride, false);
                         return () => sampler.GetBitmap();
                     }
                 }
@@ -252,14 +268,18 @@ namespace Umbral.payload.Handlers
                 // and often the still image is of higher quality than the images produced by the capture stream.
                 // The camera may have a button that acts as a hardware trigger, or it may support software triggering.
                 // A camera that supports still images will expose a still image pin, which is pin category PIN_CATEGORY_STILL.
-                var sample = ConnectSampleGrabberAndRenderer(graph, builder, vcap_source, DirectShow.DsGuid.PIN_CATEGORY_STILL);
+                SampleGrabberInfo sample = ConnectSampleGrabberAndRenderer(graph, builder, vcap_source, DirectShow.DsGuid.PIN_CATEGORY_STILL);
                 if (sample != null)
                 {
                     // release when finish.
-                    Released += () => { var i_grabber = sample.Grabber; DirectShow.ReleaseInstance(ref i_grabber); };
+                    Released += () =>
+                    {
+                        DirectShow.ISampleGrabber i_grabber = sample.Grabber;
+                        DirectShow.ReleaseInstance(ref i_grabber);
+                    };
 
-                    var still_pin = DirectShow.FindPin(vcap_source, 0, DirectShow.PIN_DIRECTION.PINDIR_OUTPUT, DirectShow.DsGuid.PIN_CATEGORY_STILL);
-                    var video_con = vcap_source as DirectShow.IAMVideoControl;
+                    DirectShow.IPin still_pin = DirectShow.FindPin(vcap_source, 0, DirectShow.PIN_DIRECTION.PINDIR_OUTPUT, DirectShow.DsGuid.PIN_CATEGORY_STILL);
+                    DirectShow.IAMVideoControl video_con = vcap_source as DirectShow.IAMVideoControl;
                     if (video_con != null)
                     {
                         StillImageAvailable = true;
@@ -267,10 +287,7 @@ namespace Umbral.payload.Handlers
                         Streams[StreamType.Still] = new SampleGrabberCallback(sample.Grabber, sample.Width, sample.Height, sample.Stride, false);
 
                         // To trigger the still pin, use the IAMVideoControl::SetMode method when the graph is running, as follows:
-                        StillImageTrigger = () =>
-                        {
-                            video_con.SetMode(still_pin, DirectShow.VideoControlFlags.Trigger | DirectShow.VideoControlFlags.ExternalTriggerEnable);
-                        };
+                        StillImageTrigger = () => { video_con.SetMode(still_pin, DirectShow.VideoControlFlags.Trigger | DirectShow.VideoControlFlags.ExternalTriggerEnable); };
                     }
                 }
             }
@@ -307,10 +324,10 @@ namespace Umbral.payload.Handlers
             // Any of these events might interrupt the capture session, possibly causing data loss.
 
             // preview by SetPreviewControl.
-            var makePreviewRender = false;
+            bool makePreviewRender = false;
             SetPreviewControlMain = (controlHandle) =>
             {
-                var vw = graph as DirectShow.IVideoWindow;
+                DirectShow.IVideoWindow vw = graph as DirectShow.IVideoWindow;
                 if (vw == null) return;
 
                 // render stream only the first time.
@@ -318,8 +335,8 @@ namespace Umbral.payload.Handlers
                 {
                     makePreviewRender = true;
 
-                    var pinCategory = DirectShow.DsGuid.PIN_CATEGORY_PREVIEW;
-                    var mediaType = DirectShow.DsGuid.MEDIATYPE_Video;
+                    Guid pinCategory = DirectShow.DsGuid.PIN_CATEGORY_PREVIEW;
+                    Guid mediaType = DirectShow.DsGuid.MEDIATYPE_Video;
                     builder.RenderStream(ref pinCategory, ref mediaType, vcap_source, null, null);
                 }
 
@@ -330,19 +347,20 @@ namespace Umbral.payload.Handlers
             // resize by SetPreviewSize.
             SetPreviewSizeMain = (clientSize) =>
             {
-                var vw = graph as DirectShow.IVideoWindow;
+                DirectShow.IVideoWindow vw = graph as DirectShow.IVideoWindow;
                 if (vw == null) return;
 
                 // calc window size and position with keep aspect.
-                var w = clientSize.Width;
-                var h = Size.Height * w / Size.Width;
+                int w = clientSize.Width;
+                int h = Size.Height * w / Size.Width;
                 if (h > clientSize.Height)
                 {
                     h = clientSize.Height;
                     w = Size.Width * h / Size.Height;
                 }
-                var x = (clientSize.Width - w) / 2;
-                var y = (clientSize.Height - h) / 2;
+
+                int x = (clientSize.Width - w) / 2;
+                int y = (clientSize.Height - h) / 2;
 
                 // set window owner.
                 const int WS_CHILD = 0x40000000; // cannot have a menu bar. 
@@ -354,11 +372,15 @@ namespace Umbral.payload.Handlers
             // preview by PreviewCaptured.(issue #18)
             SetPreviewCallbackMain = () =>
             {
-                var sample = ConnectSampleGrabberAndRenderer(graph, builder, vcap_source, DirectShow.DsGuid.PIN_CATEGORY_PREVIEW);
+                SampleGrabberInfo sample = ConnectSampleGrabberAndRenderer(graph, builder, vcap_source, DirectShow.DsGuid.PIN_CATEGORY_PREVIEW);
                 if (sample != null)
                 {
                     // release when finish.
-                    Released += () => { var i_grabber = sample.Grabber; DirectShow.ReleaseInstance(ref i_grabber); };
+                    Released += () =>
+                    {
+                        DirectShow.ISampleGrabber i_grabber = sample.Grabber;
+                        DirectShow.ReleaseInstance(ref i_grabber);
+                    };
 
                     Streams[StreamType.Preview] = new SampleGrabberCallback(sample.Grabber, sample.Width, sample.Height, sample.Stride, true);
                 }
@@ -391,15 +413,15 @@ namespace Umbral.payload.Handlers
             //------------------------------
             // SampleGrabber
             //------------------------------
-            var grabber = CreateSampleGrabber();
+            DirectShow.IBaseFilter grabber = CreateSampleGrabber();
             graph.AddFilter(grabber, "SampleGrabber");
-            var i_grabber = (DirectShow.ISampleGrabber)grabber;
+            DirectShow.ISampleGrabber i_grabber = (DirectShow.ISampleGrabber)grabber;
             i_grabber.SetBufferSamples(true);
 
             //---------------------------------------------------
             // Null Renderer
             //---------------------------------------------------
-            var renderer = DirectShow.CoCreateInstance(DirectShow.DsGuid.CLSID_NullRenderer) as DirectShow.IBaseFilter;
+            DirectShow.IBaseFilter renderer = DirectShow.CoCreateInstance(DirectShow.DsGuid.CLSID_NullRenderer) as DirectShow.IBaseFilter;
             graph.AddFilter(renderer, "NullRenderer");
 
             //---------------------------------------------------
@@ -408,7 +430,7 @@ namespace Umbral.payload.Handlers
             try
             {
                 //var pinCategory = DirectShow.DsGuid.PIN_CATEGORY_CAPTURE;
-                var mediaType = DirectShow.DsGuid.MEDIATYPE_Video;
+                Guid mediaType = DirectShow.DsGuid.MEDIATYPE_Video;
                 builder.RenderStream(ref pinCategory, ref mediaType, vcap_source, grabber, renderer);
             }
             catch (Exception)
@@ -420,12 +442,12 @@ namespace Umbral.payload.Handlers
 
             // SampleGrabber Format.
             {
-                var mt = new DirectShow.AM_MEDIA_TYPE();
+                DirectShow.AM_MEDIA_TYPE mt = new DirectShow.AM_MEDIA_TYPE();
                 i_grabber.GetConnectedMediaType(mt);
-                var header = (DirectShow.VIDEOINFOHEADER)Marshal.PtrToStructure(mt.pbFormat, typeof(DirectShow.VIDEOINFOHEADER));
-                var width = header.bmiHeader.biWidth;
-                var height = header.bmiHeader.biHeight;
-                var stride = width * (header.bmiHeader.biBitCount / 8);
+                DirectShow.VIDEOINFOHEADER header = (DirectShow.VIDEOINFOHEADER)Marshal.PtrToStructure(mt.pbFormat, typeof(DirectShow.VIDEOINFOHEADER));
+                int width = header.bmiHeader.biWidth;
+                int height = header.bmiHeader.biHeight;
+                int stride = width * (header.bmiHeader.biBitCount / 8);
                 DirectShow.DeleteMediaType(ref mt);
 
                 return new SampleGrabberInfo() { Grabber = i_grabber, Width = width, Height = height, Stride = stride };
@@ -440,42 +462,60 @@ namespace Umbral.payload.Handlers
             public PropertyItems(DirectShow.IBaseFilter vcap_source)
             {
                 // Pan, Tilt, Roll, Zoom, Exposure, Iris, Focus
-                this.CameraControl = Enum.GetValues(typeof(DirectShow.CameraControlProperty)).Cast<DirectShow.CameraControlProperty>()
+                CameraControl = Enum.GetValues(typeof(DirectShow.CameraControlProperty)).Cast<DirectShow.CameraControlProperty>()
                     .Select(item =>
                     {
-                        PropertyItems.Property prop = null;
+                        Property prop = null;
                         try
                         {
-                            var cam_ctrl = vcap_source as DirectShow.IAMCameraControl;
+                            DirectShow.IAMCameraControl cam_ctrl = vcap_source as DirectShow.IAMCameraControl;
                             if (cam_ctrl == null) throw new NotSupportedException("no IAMCameraControl Interface."); // will catched.
                             int min = 0, max = 0, step = 0, def = 0, flags = 0;
                             cam_ctrl.GetRange(item, ref min, ref max, ref step, ref def, ref flags); // COMException if not supports.
 
                             Action<DirectShow.CameraControlFlags, int> set = (flag, value) => cam_ctrl.Set(item, value, (int)flag);
-                            Func<int> get = () => { int value = 0; cam_ctrl.Get(item, ref value, ref flags); return value; };
+                            Func<int> get = () =>
+                            {
+                                int value = 0;
+                                cam_ctrl.Get(item, ref value, ref flags);
+                                return value;
+                            };
                             prop = new Property(min, max, step, def, flags, set, get);
                         }
-                        catch (Exception) { prop = new Property(); } // available = false
+                        catch (Exception)
+                        {
+                            prop = new Property();
+                        } // available = false
+
                         return new { Key = item, Value = prop };
                     }).ToDictionary(x => x.Key, x => x.Value);
 
                 // Brightness, Contrast, Hue, Saturation, Sharpness, Gamma, ColorEnable, WhiteBalance, BacklightCompensation, Gain
-                this.VideoProcAmp = Enum.GetValues(typeof(DirectShow.VideoProcAmpProperty)).Cast<DirectShow.VideoProcAmpProperty>()
+                VideoProcAmp = Enum.GetValues(typeof(DirectShow.VideoProcAmpProperty)).Cast<DirectShow.VideoProcAmpProperty>()
                     .Select(item =>
                     {
-                        PropertyItems.Property prop = null;
+                        Property prop = null;
                         try
                         {
-                            var vid_ctrl = vcap_source as DirectShow.IAMVideoProcAmp;
+                            DirectShow.IAMVideoProcAmp vid_ctrl = vcap_source as DirectShow.IAMVideoProcAmp;
                             if (vid_ctrl == null) throw new NotSupportedException("no IAMVideoProcAmp Interface."); // will catched.
                             int min = 0, max = 0, step = 0, def = 0, flags = 0;
                             vid_ctrl.GetRange(item, ref min, ref max, ref step, ref def, ref flags); // COMException if not supports.
 
                             Action<DirectShow.CameraControlFlags, int> set = (flag, value) => vid_ctrl.Set(item, value, (int)flag);
-                            Func<int> get = () => { int value = 0; vid_ctrl.Get(item, ref value, ref flags); return value; };
+                            Func<int> get = () =>
+                            {
+                                int value = 0;
+                                vid_ctrl.Get(item, ref value, ref flags);
+                                return value;
+                            };
                             prop = new Property(min, max, step, def, flags, set, get);
                         }
-                        catch (Exception) { prop = new Property(); } // available = false
+                        catch (Exception)
+                        {
+                            prop = new Property();
+                        } // available = false
+
                         return new { Key = item, Value = prop };
                     }).ToDictionary(x => x.Key, x => x.Value);
             }
@@ -487,10 +527,10 @@ namespace Umbral.payload.Handlers
             private Dictionary<DirectShow.VideoProcAmpProperty, Property> VideoProcAmp;
 
             /// <summary>Get CameraControl Property. Check Available before use.</summary>
-            public Property this[DirectShow.CameraControlProperty item] { get { return CameraControl[item]; } }
+            public Property this[DirectShow.CameraControlProperty item] => CameraControl[item];
 
             /// <summary>Get VideoProcAmp Property. Check Available before use.</summary>
-            public Property this[DirectShow.VideoProcAmpProperty item] { get { return VideoProcAmp[item]; } }
+            public Property this[DirectShow.VideoProcAmpProperty item] => VideoProcAmp[item];
 
             public class Property
             {
@@ -506,21 +546,21 @@ namespace Umbral.payload.Handlers
 
                 public Property()
                 {
-                    this.SetValue = (flag, value) => { };
-                    this.Available = false;
+                    SetValue = (flag, value) => { };
+                    Available = false;
                 }
 
                 public Property(int min, int max, int step, int @default, int flags, Action<DirectShow.CameraControlFlags, int> set, Func<int> get)
                 {
-                    this.Min = min;
-                    this.Max = max;
-                    this.Step = step;
-                    this.Default = @default;
-                    this.Flags = (DirectShow.CameraControlFlags)flags;
-                    this.CanAuto = (Flags & DirectShow.CameraControlFlags.Auto) == DirectShow.CameraControlFlags.Auto;
-                    this.SetValue = set;
-                    this.GetValue = get;
-                    this.Available = true;
+                    Min = min;
+                    Max = max;
+                    Step = step;
+                    Default = @default;
+                    Flags = (DirectShow.CameraControlFlags)flags;
+                    CanAuto = (Flags & DirectShow.CameraControlFlags.Auto) == DirectShow.CameraControlFlags.Auto;
+                    SetValue = set;
+                    GetValue = get;
+                    Available = true;
                 }
 
                 public override string ToString()
@@ -543,7 +583,7 @@ namespace Umbral.payload.Handlers
 
             public SampleGrabberCallback(DirectShow.ISampleGrabber grabber, int width, int height, int stride, bool useCache)
             {
-                this.BmpBuilder = new BitmapBuilder(width, height, stride, useCache);
+                BmpBuilder = new BitmapBuilder(width, height, stride, useCache);
 
                 // create Buffered.Invoke thread.
                 BufferedEvent = new System.Threading.AutoResetEvent(false);
@@ -579,7 +619,7 @@ namespace Umbral.payload.Handlers
                 }
 
                 // replace lock statement to Monitor.TryEnter. (issue #14)
-                var locked = false;
+                bool locked = false;
                 try
                 {
                     System.Threading.Monitor.TryEnter(BufferLock, 0, ref locked);
@@ -616,8 +656,8 @@ namespace Umbral.payload.Handlers
 
             public SampleGrabberBuffer(DirectShow.ISampleGrabber grabber, int width, int height, int stride)
             {
-                this.Grabber = grabber;
-                this.BmpBuilder = new BitmapBuilder(width, height, stride, false);
+                Grabber = grabber;
+                BmpBuilder = new BitmapBuilder(width, height, stride, false);
             }
 
             public Bitmap GetBitmap()
@@ -664,7 +704,7 @@ namespace Umbral.payload.Handlers
                 Marshal.Copy(BufPtr, Buffer, 0, size);
 
                 // 画像を作成
-                var result = BmpBuilder.BufferToBitmap(Buffer);
+                Bitmap result = BmpBuilder.BufferToBitmap(Buffer);
 
                 return result;
             }
@@ -759,9 +799,9 @@ namespace Umbral.payload.Handlers
 #else
             public BitmapBuilder(int width, int height, int stride, bool dummy)
             {
-                this.Width = width;
-                this.Height = height;
-                this.Stride = stride;
+                Width = width;
+                Height = height;
+                Stride = stride;
 
                 EmptyBitmap = new Bitmap(width, height);
             }
@@ -769,17 +809,18 @@ namespace Umbral.payload.Handlers
             public Bitmap BufferToBitmap(byte[] buffer)
             {
                 // in WinForms, always allocate Bitmap memory. 
-                var result = new Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                Bitmap result = new Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
-                var bmp_data = result.LockBits(new Rectangle(Point.Empty, result.Size), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                BitmapData bmp_data = result.LockBits(new Rectangle(Point.Empty, result.Size), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
                 // copy from last row.
                 for (int y = 0; y < Height; y++)
                 {
-                    var src_idx = buffer.Length - (Stride * (y + 1));
-                    var dst = IntPtr.Add(bmp_data.Scan0, Stride * y);
+                    int src_idx = buffer.Length - Stride * (y + 1);
+                    IntPtr dst = IntPtr.Add(bmp_data.Scan0, Stride * y);
                     Marshal.Copy(buffer, src_idx, dst, Stride);
                 }
+
                 result.UnlockBits(bmp_data);
 
                 return result;
@@ -794,8 +835,8 @@ namespace Umbral.payload.Handlers
         /// </summary>
         private DirectShow.IBaseFilter CreateSampleGrabber()
         {
-            var filter = DirectShow.CreateFilter(DirectShow.DsGuid.CLSID_SampleGrabber);
-            var ismp = filter as DirectShow.ISampleGrabber;
+            DirectShow.IBaseFilter filter = DirectShow.CreateFilter(DirectShow.DsGuid.CLSID_SampleGrabber);
+            DirectShow.ISampleGrabber ismp = filter as DirectShow.ISampleGrabber;
 
             // サンプル グラバを最初に作成したときは、優先メディア タイプは設定されていない。
             // これは、グラフ内のほぼすべてのフィルタに接続はできるが、受け取るデータ タイプを制御できないとうことである。
@@ -812,7 +853,7 @@ namespace Umbral.payload.Handlers
             // サンプル グラバ フィルタはトップダウン方向 (負の biHeight) のビデオ タイプ、または
             // FORMAT_VideoInfo2 のフォーマット タイプのビデオ タイプはすべて拒否する。
 
-            var mt = new DirectShow.AM_MEDIA_TYPE();
+            DirectShow.AM_MEDIA_TYPE mt = new DirectShow.AM_MEDIA_TYPE();
             mt.MajorType = DirectShow.DsGuid.MEDIATYPE_Video;
             mt.SubType = DirectShow.DsGuid.MEDIASUBTYPE_RGB24;
             ismp.SetMediaType(mt);
@@ -824,8 +865,8 @@ namespace Umbral.payload.Handlers
         /// </summary>
         private DirectShow.IBaseFilter CreateVideoCaptureSource(int index, VideoFormat format)
         {
-            var filter = DirectShow.CreateFilter(DirectShow.DsGuid.CLSID_VideoInputDeviceCategory, index);
-            var pin = DirectShow.FindPin(filter, 0, DirectShow.PIN_DIRECTION.PINDIR_OUTPUT);
+            DirectShow.IBaseFilter filter = DirectShow.CreateFilter(DirectShow.DsGuid.CLSID_VideoInputDeviceCategory, index);
+            DirectShow.IPin pin = DirectShow.FindPin(filter, 0, DirectShow.PIN_DIRECTION.PINDIR_OUTPUT);
             SetVideoOutputFormat(pin, format);
             return filter;
         }
@@ -833,7 +874,7 @@ namespace Umbral.payload.Handlers
         /// <summary>
         /// ビデオキャプチャデバイスの出力形式を選択する。
         /// </summary>
-        private static void SetVideoOutputFormat(DirectShow.IPin pin, VideoFormat format)
+        static private void SetVideoOutputFormat(DirectShow.IPin pin, VideoFormat format)
         {
             var formats = GetVideoOutputFormat(pin);
 
@@ -899,7 +940,7 @@ namespace Umbral.payload.Handlers
             // VIDEO_STREAM_CONFIG_CAPS is deprecated. First, find just the fixed size.
             for (int i = 0; i < formats.Length; i++)
             {
-                var item = formats[i];
+                VideoFormat item = formats[i];
 
                 // VideoInfoのみ対応する。(VideoInfo2はSampleGrabber未対応のため)
                 // VideoInfo only... (SampleGrabber do not support VideoInfo2)
@@ -919,7 +960,7 @@ namespace Umbral.payload.Handlers
             // Not found fixed size, search for variable size.
             for (int i = 0; i < formats.Length; i++)
             {
-                var item = formats[i];
+                VideoFormat item = formats[i];
 
                 // VideoInfoのみ対応する。(VideoInfo2はSampleGrabber未対応のため)
                 // VideoInfo only... (SampleGrabber do not support VideoInfo2)
@@ -953,10 +994,10 @@ namespace Umbral.payload.Handlers
         /// <summary>
         /// ビデオキャプチャデバイスがサポートするメディアタイプ・サイズを取得する。
         /// </summary>
-        private static VideoFormat[] GetVideoOutputFormat(DirectShow.IPin pin)
+        static private VideoFormat[] GetVideoOutputFormat(DirectShow.IPin pin)
         {
             // IAMStreamConfigインタフェース取得
-            var config = pin as DirectShow.IAMStreamConfig;
+            DirectShow.IAMStreamConfig config = pin as DirectShow.IAMStreamConfig;
             if (config == null)
             {
                 throw new InvalidOperationException("no IAMStreamConfig interface.");
@@ -974,12 +1015,12 @@ namespace Umbral.payload.Handlers
             var result = new VideoFormat[cap_count];
 
             // データ用領域確保
-            var cap_data = Marshal.AllocHGlobal(cap_size);
+            IntPtr cap_data = Marshal.AllocHGlobal(cap_size);
 
             // 列挙
             for (int i = 0; i < cap_count; i++)
             {
-                var entry = new VideoFormat();
+                VideoFormat entry = new VideoFormat();
 
                 // x番目のフォーマット情報取得
                 DirectShow.AM_MEDIA_TYPE mt = null;
@@ -992,13 +1033,13 @@ namespace Umbral.payload.Handlers
 
                 if (mt.FormatType == DirectShow.DsGuid.FORMAT_VideoInfo)
                 {
-                    var vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER>(mt.pbFormat);
+                    DirectShow.VIDEOINFOHEADER vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER>(mt.pbFormat);
                     entry.Size = new Size(vinfo.bmiHeader.biWidth, vinfo.bmiHeader.biHeight);
                     entry.TimePerFrame = vinfo.AvgTimePerFrame;
                 }
                 else if (mt.FormatType == DirectShow.DsGuid.FORMAT_VideoInfo2)
                 {
-                    var vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER2>(mt.pbFormat);
+                    DirectShow.VIDEOINFOHEADER2 vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER2>(mt.pbFormat);
                     entry.Size = new Size(vinfo.bmiHeader.biWidth, vinfo.bmiHeader.biHeight);
                     entry.TimePerFrame = vinfo.AvgTimePerFrame;
                 }
@@ -1023,10 +1064,10 @@ namespace Umbral.payload.Handlers
         /// <param name="index">希望のindexを指定する</param>
         /// <param name="size">Empty以外を指定すると出力サイズを変更する。事前にVIDEO_STREAM_CONFIG_CAPSで取得した可能範囲内を指定すること。</param>
         /// <param name="timePerFrame">0以上を指定するとフレームレートを変更する。事前にVIDEO_STREAM_CONFIG_CAPSで取得した可能範囲内を指定すること。</param>
-        private static void SetVideoOutputFormat(DirectShow.IPin pin, int index, Size size, long timePerFrame)
+        static private void SetVideoOutputFormat(DirectShow.IPin pin, int index, Size size, long timePerFrame)
         {
             // IAMStreamConfigインタフェース取得
-            var config = pin as DirectShow.IAMStreamConfig;
+            DirectShow.IAMStreamConfig config = pin as DirectShow.IAMStreamConfig;
             if (config == null)
             {
                 throw new InvalidOperationException("no IAMStreamConfig interface.");
@@ -1041,25 +1082,43 @@ namespace Umbral.payload.Handlers
             }
 
             // データ用領域確保
-            var cap_data = Marshal.AllocHGlobal(cap_size);
+            IntPtr cap_data = Marshal.AllocHGlobal(cap_size);
 
             // idx番目のフォーマット情報取得
             DirectShow.AM_MEDIA_TYPE mt = null;
             config.GetStreamCaps(index, ref mt, cap_data);
-            var cap = PtrToStructure<DirectShow.VIDEO_STREAM_CONFIG_CAPS>(cap_data);
+            DirectShow.VIDEO_STREAM_CONFIG_CAPS cap = PtrToStructure<DirectShow.VIDEO_STREAM_CONFIG_CAPS>(cap_data);
 
             if (mt.FormatType == DirectShow.DsGuid.FORMAT_VideoInfo)
             {
-                var vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER>(mt.pbFormat);
-                if (!size.IsEmpty) { vinfo.bmiHeader.biWidth = (int)size.Width; vinfo.bmiHeader.biHeight = (int)size.Height; }
-                if (timePerFrame > 0) { vinfo.AvgTimePerFrame = timePerFrame; }
+                DirectShow.VIDEOINFOHEADER vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER>(mt.pbFormat);
+                if (!size.IsEmpty)
+                {
+                    vinfo.bmiHeader.biWidth = (int)size.Width;
+                    vinfo.bmiHeader.biHeight = (int)size.Height;
+                }
+
+                if (timePerFrame > 0)
+                {
+                    vinfo.AvgTimePerFrame = timePerFrame;
+                }
+
                 Marshal.StructureToPtr(vinfo, mt.pbFormat, true);
             }
             else if (mt.FormatType == DirectShow.DsGuid.FORMAT_VideoInfo2)
             {
-                var vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER2>(mt.pbFormat);
-                if (!size.IsEmpty) { vinfo.bmiHeader.biWidth = (int)size.Width; vinfo.bmiHeader.biHeight = (int)size.Height; }
-                if (timePerFrame > 0) { vinfo.AvgTimePerFrame = timePerFrame; }
+                DirectShow.VIDEOINFOHEADER2 vinfo = PtrToStructure<DirectShow.VIDEOINFOHEADER2>(mt.pbFormat);
+                if (!size.IsEmpty)
+                {
+                    vinfo.bmiHeader.biWidth = (int)size.Width;
+                    vinfo.bmiHeader.biHeight = (int)size.Height;
+                }
+
+                if (timePerFrame > 0)
+                {
+                    vinfo.AvgTimePerFrame = timePerFrame;
+                }
+
                 Marshal.StructureToPtr(vinfo, mt.pbFormat, true);
             }
 
@@ -1067,20 +1126,20 @@ namespace Umbral.payload.Handlers
             config.SetFormat(mt);
 
             // 解放
-            if (cap_data != System.IntPtr.Zero) Marshal.FreeHGlobal(cap_data);
+            if (cap_data != IntPtr.Zero) Marshal.FreeHGlobal(cap_data);
             if (mt != null) DirectShow.DeleteMediaType(ref mt);
         }
 
-        private static T PtrToStructure<T>(IntPtr ptr)
+        static private T PtrToStructure<T>(IntPtr ptr)
         {
             return (T)Marshal.PtrToStructure(ptr, typeof(T));
         }
 
         public class VideoFormat
         {
-            public string MajorType { get; set; }  // [Video]など
-            public string SubType { get; set; }    // [YUY2], [MJPG]など
-            public Size Size { get; set; }         // ビデオサイズ
+            public string MajorType { get; set; } // [Video]など
+            public string SubType { get; set; } // [YUY2], [MJPG]など
+            public Size Size { get; set; } // ビデオサイズ
             public long TimePerFrame { get; set; } // ビデオフレームの平均表示時間を100ナノ秒単位で。30fpsのとき「333333」
             public DirectShow.VIDEO_STREAM_CONFIG_CAPS Caps { get; set; }
 
@@ -1091,19 +1150,21 @@ namespace Umbral.payload.Handlers
 
             private string CapsString()
             {
-                var sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
                 sb.AppendFormat("{0}, ", DirectShow.DsGuid.GetNickname(Caps.Guid));
-                foreach (var info in Caps.GetType().GetFields())
+                foreach (FieldInfo info in Caps.GetType().GetFields())
                 {
                     sb.AppendFormat("{0}={1}, ", info.Name, info.GetValue(Caps));
                 }
+
                 return sb.ToString();
             }
         }
     }
 
-    static class DirectShow
+    internal static class DirectShow
     {
+
         #region Function
 
         /// <summary>COMオブジェクトのインスタンスを作成する。</summary>
@@ -1131,14 +1192,20 @@ namespace Umbral.payload.Handlers
         /// <summary>フィルタグラフを再生・停止・一時停止する。</summary>
         public static void PlayGraph(IGraphBuilder graph, FILTER_STATE state)
         {
-            var mediaControl = graph as IMediaControl;
+            IMediaControl mediaControl = graph as IMediaControl;
             if (mediaControl == null) return;
 
             switch (state)
             {
-                case FILTER_STATE.Paused: mediaControl.Pause(); break;
-                case FILTER_STATE.Stopped: mediaControl.Stop(); break;
-                default: mediaControl.Run(); break;
+                case FILTER_STATE.Paused:
+                    mediaControl.Pause();
+                    break;
+                case FILTER_STATE.Stopped:
+                    mediaControl.Stop();
+                    break;
+                default:
+                    mediaControl.Run();
+                    break;
             }
         }
 
@@ -1151,7 +1218,7 @@ namespace Umbral.payload.Handlers
             {
                 object value = null;
                 prop.Read("FriendlyName", ref value, 0);
-                var name = (string)value;
+                string name = (string)value;
 
                 result.Add(name);
 
@@ -1181,7 +1248,7 @@ namespace Umbral.payload.Handlers
                 // フィルタのインスタンス作成して返す。
                 {
                     object value = null;
-                    Guid guid = DirectShow.DsGuid.IID_IBaseFilter;
+                    Guid guid = DsGuid.IID_IBaseFilter;
                     moniker.BindToObject(null, null, ref guid, out value);
                     result = value as IBaseFilter;
                     return true;
@@ -1194,7 +1261,7 @@ namespace Umbral.payload.Handlers
 
         /// <summary>モニカを列挙する。</summary>
         /// <remarks>モニカとはCOMオブジェクトを識別する別名のこと。</remarks>
-        private static void EnumMonikers(Guid category, Func<IMoniker, IPropertyBag, bool> func)
+        static private void EnumMonikers(Guid category, Func<IMoniker, IPropertyBag, bool> func)
         {
             IEnumMoniker enumerator = null;
             ICreateDevEnum device = null;
@@ -1212,22 +1279,22 @@ namespace Umbral.payload.Handlers
 
                 // 列挙.
                 var monikers = new IMoniker[1];
-                var fetched = IntPtr.Zero;
+                IntPtr fetched = IntPtr.Zero;
 
                 while (enumerator.Next(monikers.Length, monikers, fetched) == 0)
                 {
-                    var moniker = monikers[0];
+                    IMoniker moniker = monikers[0];
 
                     // プロパティバッグへのバインド.
                     object value = null;
                     Guid guid = DsGuid.IID_IPropertyBag;
                     moniker.BindToStorage(null, null, ref guid, out value);
-                    var prop = (IPropertyBag)value;
+                    IPropertyBag prop = (IPropertyBag)value;
 
                     try
                     {
                         // trueで列挙完了。falseで継続する。
-                        var rc = func(moniker, prop);
+                        bool rc = func(moniker, prop);
                         if (rc == true) break;
                     }
                     finally
@@ -1250,10 +1317,7 @@ namespace Umbral.payload.Handlers
         /// <summary>ピンを検索する。</summary>
         public static IPin FindPin(IBaseFilter filter, string name)
         {
-            var result = EnumPins(filter, (pin, info) =>
-            {
-                return (info.achName == name);
-            });
+            IPin result = EnumPins(filter, (pin, info) => { return info.achName == name; });
 
             if (result == null) throw new ArgumentException("can't fild pin.");
             return result;
@@ -1263,13 +1327,13 @@ namespace Umbral.payload.Handlers
         public static IPin FindPin(IBaseFilter filter, int index, PIN_DIRECTION direction)
         {
             int curr_index = 0;
-            var result = EnumPins(filter, (pin, info) =>
+            IPin result = EnumPins(filter, (pin, info) =>
             {
                 // directionを確認。
                 if (info.dir != direction) return false;
 
                 // indexは最後にチェック。
-                return (index == curr_index++);
+                return index == curr_index++;
             });
 
             if (result == null) throw new ArgumentException("can't fild pin.");
@@ -1280,7 +1344,7 @@ namespace Umbral.payload.Handlers
         public static IPin FindPin(IBaseFilter filter, int index, PIN_DIRECTION direction, Guid category)
         {
             int curr_index = 0;
-            var result = EnumPins(filter, (pin, info) =>
+            IPin result = EnumPins(filter, (pin, info) =>
             {
                 // directionを確認。
                 if (info.dir != direction) return false;
@@ -1289,24 +1353,24 @@ namespace Umbral.payload.Handlers
                 if (GetPinCategory(pin) != category) return false;
 
                 // indexは最後にチェック。
-                return (index == curr_index++);
+                return index == curr_index++;
             });
 
             if (result == null) throw new ArgumentException("can't fild pin.");
             return result;
         }
 
-        private static Guid GetPinCategory(IPin pPin)
+        static private Guid GetPinCategory(IPin pPin)
         {
-            var kps = pPin as IKsPropertySet;
+            IKsPropertySet kps = pPin as IKsPropertySet;
             if (kps == null) return Guid.Empty;
 
-            var size = Marshal.SizeOf(typeof(Guid));
-            var ptr = Marshal.AllocCoTaskMem(size);
+            int size = Marshal.SizeOf(typeof(Guid));
+            IntPtr ptr = Marshal.AllocCoTaskMem(size);
 
             try
             {
-                var hr = kps.Get(DirectShow.DsGuid.AMPROPSETID_PIN, (int)AMPropertyPin.Category, IntPtr.Zero, 0, ptr, size, out int cbBytes);
+                int hr = kps.Get(DsGuid.AMPROPSETID_PIN, (int)AMPropertyPin.Category, IntPtr.Zero, 0, ptr, size, out int cbBytes);
                 if (hr < 0) return Guid.Empty;
 
                 return (Guid)Marshal.PtrToStructure(ptr, typeof(Guid));
@@ -1318,7 +1382,7 @@ namespace Umbral.payload.Handlers
         }
 
         /// <summary>Pinを列挙する。</summary>
-        private static IPin EnumPins(IBaseFilter filter, Func<IPin, PIN_INFO, bool> func)
+        static private IPin EnumPins(IBaseFilter filter, Func<IPin, PIN_INFO, bool> func)
         {
             IEnumPins pins = null;
             IPin ipin = null;
@@ -1332,11 +1396,11 @@ namespace Umbral.payload.Handlers
                 {
                     if (fetched == 0) break;
 
-                    var info = new PIN_INFO();
+                    PIN_INFO info = new PIN_INFO();
                     try
                     {
                         ipin.QueryPinInfo(info);
-                        var rc = func(ipin, info);
+                        bool rc = func(ipin, info);
                         if (rc) return ipin;
                     }
                     finally
@@ -1361,8 +1425,8 @@ namespace Umbral.payload.Handlers
         /// <summary>ピンを接続する。</summary>
         public static void ConnectFilter(IGraphBuilder graph, IBaseFilter out_flt, int out_no, IBaseFilter in_flt, int in_no)
         {
-            var out_pin = FindPin(out_flt, out_no, PIN_DIRECTION.PINDIR_OUTPUT);
-            var inp_pin = FindPin(in_flt, in_no, PIN_DIRECTION.PINDIR_INPUT);
+            IPin out_pin = FindPin(out_flt, out_no, PIN_DIRECTION.PINDIR_OUTPUT);
+            IPin inp_pin = FindPin(in_flt, in_no, PIN_DIRECTION.PINDIR_INPUT);
             graph.Connect(out_pin, inp_pin);
         }
 
@@ -1379,32 +1443,41 @@ namespace Umbral.payload.Handlers
 
         #region Interface
 
-        [ComVisible(true), ComImport(), Guid("56a8689f-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a8689f-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IFilterGraph
         {
-            int AddFilter([In] IBaseFilter pFilter, [In, MarshalAs(UnmanagedType.LPWStr)] string pName);
+            int AddFilter([In] IBaseFilter pFilter, [In] [MarshalAs(UnmanagedType.LPWStr)] string pName);
             int RemoveFilter([In] IBaseFilter pFilter);
-            int EnumFilters([In, Out] ref IEnumFilters ppEnum);
-            int FindFilterByName([In, MarshalAs(UnmanagedType.LPWStr)] string pName, [In, Out] ref IBaseFilter ppFilter);
-            int ConnectDirect([In] IPin ppinOut, [In] IPin ppinIn, [In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int EnumFilters([In] [Out] ref IEnumFilters ppEnum);
+            int FindFilterByName([In] [MarshalAs(UnmanagedType.LPWStr)] string pName, [In] [Out] ref IBaseFilter ppFilter);
+            int ConnectDirect([In] IPin ppinOut, [In] IPin ppinIn, [In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
             int Reconnect([In] IPin ppin);
             int Disconnect([In] IPin ppin);
             int SetDefaultSyncSource();
         }
 
-        [ComVisible(true), ComImport(), Guid("56a868a9-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a868a9-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IGraphBuilder : IFilterGraph
         {
             int Connect([In] IPin ppinOut, [In] IPin ppinIn);
             int Render([In] IPin ppinOut);
-            int RenderFile([In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile, [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList);
-            int AddSourceFilter([In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName, [In, MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName, [In, Out] ref IBaseFilter ppFilter);
+            int RenderFile([In] [MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFile, [In] [MarshalAs(UnmanagedType.LPWStr)] string lpcwstrPlayList);
+            int AddSourceFilter([In] [MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFileName, [In] [MarshalAs(UnmanagedType.LPWStr)] string lpcwstrFilterName, [In] [Out] ref IBaseFilter ppFilter);
             int SetLogFile(IntPtr hFile);
             int Abort();
             int ShouldOperationContinue();
         }
 
-        [ComVisible(true), ComImport(), Guid("56a868b1-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsDual)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a868b1-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsDual)]
         public interface IMediaControl
         {
             int Run();
@@ -1412,58 +1485,85 @@ namespace Umbral.payload.Handlers
             int Stop();
             int GetState(int msTimeout, out int pfs);
             int RenderFile(string strFilename);
-            int AddSourceFilter([In] string strFilename, [In, Out, MarshalAs(UnmanagedType.IDispatch)] ref object ppUnk);
-            int get_FilterCollection([In, Out, MarshalAs(UnmanagedType.IDispatch)] ref object ppUnk);
-            int get_RegFilterCollection([In, Out, MarshalAs(UnmanagedType.IDispatch)] ref object ppUnk);
+            int AddSourceFilter([In] string strFilename, [In] [Out] [MarshalAs(UnmanagedType.IDispatch)] ref object ppUnk);
+            int get_FilterCollection([In] [Out] [MarshalAs(UnmanagedType.IDispatch)] ref object ppUnk);
+            int get_RegFilterCollection([In] [Out] [MarshalAs(UnmanagedType.IDispatch)] ref object ppUnk);
             int StopWhenReady();
         }
 
-        [ComVisible(true), ComImport(), Guid("93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface ICaptureGraphBuilder2
         {
             int SetFiltergraph([In] IGraphBuilder pfg);
-            int GetFiltergraph([In, Out] ref IGraphBuilder ppfg);
-            int SetOutputFileName([In] ref Guid pType, [In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile, [In, Out] ref IBaseFilter ppbf, [In, Out] ref IFileSinkFilter ppSink);
-            int FindInterface([In] ref Guid pCategory, [In] ref Guid pType, [In] IBaseFilter pbf, [In] IntPtr riid, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object ppint);
-            int RenderStream([In] ref Guid pCategory, [In] ref Guid pType, [In, MarshalAs(UnmanagedType.IUnknown)] object pSource, [In] IBaseFilter pfCompressor, [In] IBaseFilter pfRenderer);
+            int GetFiltergraph([In] [Out] ref IGraphBuilder ppfg);
+            int SetOutputFileName([In] ref Guid pType, [In] [MarshalAs(UnmanagedType.LPWStr)] string lpstrFile, [In] [Out] ref IBaseFilter ppbf, [In] [Out] ref IFileSinkFilter ppSink);
+            int FindInterface([In] ref Guid pCategory, [In] ref Guid pType, [In] IBaseFilter pbf, [In] IntPtr riid, [In] [Out] [MarshalAs(UnmanagedType.IUnknown)] ref object ppint);
+            int RenderStream([In] ref Guid pCategory, [In] ref Guid pType, [In] [MarshalAs(UnmanagedType.IUnknown)] object pSource, [In] IBaseFilter pfCompressor, [In] IBaseFilter pfRenderer);
             int ControlStream([In] ref Guid pCategory, [In] ref Guid pType, [In] IBaseFilter pFilter, [In] IntPtr pstart, [In] IntPtr pstop, [In] short wStartCookie, [In] short wStopCookie);
-            int AllocCapFile([In, MarshalAs(UnmanagedType.LPWStr)] string lpstrFile, [In] long dwlSize);
-            int CopyCaptureFile([In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrOld, [In, MarshalAs(UnmanagedType.LPWStr)] string lpwstrNew, [In] int fAllowEscAbort, [In] IAMCopyCaptureFileProgress pFilter);
-            int FindPin([In] object pSource, [In] int pindir, [In] ref Guid pCategory, [In] ref Guid pType, [In, MarshalAs(UnmanagedType.Bool)] bool fUnconnected, [In] int num, [Out] out IntPtr ppPin);
+            int AllocCapFile([In] [MarshalAs(UnmanagedType.LPWStr)] string lpstrFile, [In] long dwlSize);
+
+            int CopyCaptureFile([In] [MarshalAs(UnmanagedType.LPWStr)] string lpwstrOld, [In] [MarshalAs(UnmanagedType.LPWStr)] string lpwstrNew, [In] int fAllowEscAbort,
+                                [In] IAMCopyCaptureFileProgress pFilter);
+
+            int FindPin([In] object pSource, [In] int pindir, [In] ref Guid pCategory, [In] ref Guid pType, [In] [MarshalAs(UnmanagedType.Bool)] bool fUnconnected, [In] int num,
+                        [Out] out IntPtr ppPin);
         }
 
-        [ComVisible(true), ComImport(), Guid("a2104830-7c70-11cf-8bce-00aa00a3f1a6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("a2104830-7c70-11cf-8bce-00aa00a3f1a6")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IFileSinkFilter
         {
-            int SetFileName([In, MarshalAs(UnmanagedType.LPWStr)] string pszFileName, [In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
-            int GetCurFile([In, Out, MarshalAs(UnmanagedType.LPWStr)] ref string pszFileName, [Out, MarshalAs(UnmanagedType.LPStruct)] out AM_MEDIA_TYPE pmt);
+            int SetFileName([In] [MarshalAs(UnmanagedType.LPWStr)] string pszFileName, [In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int GetCurFile([In] [Out] [MarshalAs(UnmanagedType.LPWStr)] ref string pszFileName, [Out] [MarshalAs(UnmanagedType.LPStruct)] out AM_MEDIA_TYPE pmt);
         }
 
-        [ComVisible(true), ComImport(), Guid("670d1d20-a068-11d0-b3f0-00aa003761c5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("670d1d20-a068-11d0-b3f0-00aa003761c5")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IAMCopyCaptureFileProgress
         {
             int Progress(int iProgress);
         }
 
 
-        [ComVisible(true), ComImport(), Guid("C6E13370-30AC-11d0-A18C-00A0C9118956"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("C6E13370-30AC-11d0-A18C-00A0C9118956")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IAMCameraControl
         {
-            int GetRange([In] CameraControlProperty Property, [In, Out] ref int pMin, [In, Out] ref int pMax, [In, Out] ref int pSteppingDelta, [In, Out] ref int pDefault, [In, Out] ref int pCapsFlag);
+            int GetRange([In] CameraControlProperty Property, [In] [Out] ref int pMin, [In] [Out] ref int pMax, [In] [Out] ref int pSteppingDelta, [In] [Out] ref int pDefault,
+                         [In] [Out] ref int pCapsFlag);
+
             int Set([In] CameraControlProperty Property, [In] int lValue, [In] int Flags);
-            int Get([In] CameraControlProperty Property, [In, Out] ref int lValue, [In, Out] ref int Flags);
+            int Get([In] CameraControlProperty Property, [In] [Out] ref int lValue, [In] [Out] ref int Flags);
         }
 
 
-        [ComVisible(true), ComImport(), Guid("C6E13360-30AC-11d0-A18C-00A0C9118956"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("C6E13360-30AC-11d0-A18C-00A0C9118956")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IAMVideoProcAmp
         {
-            int GetRange([In] VideoProcAmpProperty Property, [In, Out] ref int pMin, [In, Out] ref int pMax, [In, Out] ref int pSteppingDelta, [In, Out] ref int pDefault, [In, Out] ref int pCapsFlag);
+            int GetRange([In] VideoProcAmpProperty Property, [In] [Out] ref int pMin, [In] [Out] ref int pMax, [In] [Out] ref int pSteppingDelta, [In] [Out] ref int pDefault,
+                         [In] [Out] ref int pCapsFlag);
+
             int Set([In] VideoProcAmpProperty Property, [In] int lValue, [In] int Flags);
-            int Get([In] VideoProcAmpProperty Property, [In, Out] ref int lValue, [In, Out] ref int Flags);
+            int Get([In] VideoProcAmpProperty Property, [In] [Out] ref int lValue, [In] [Out] ref int Flags);
         }
 
-        [ComVisible(true), ComImport(), Guid("6A2E0670-28E4-11D0-A18C-00A0C9118956"), System.Security.SuppressUnmanagedCodeSecurity, InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("6A2E0670-28E4-11D0-A18C-00A0C9118956")]
+        [System.Security.SuppressUnmanagedCodeSecurity]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IAMVideoControl
         {
             int GetCaps([In] IPin pPin, [Out] out VideoControlFlags pCapsFlags);
@@ -1474,20 +1574,28 @@ namespace Umbral.payload.Handlers
             int GetFrameRateList([In] IPin pPin, [In] int iIndex, [In] Size Dimensions, [Out] out int ListSize, [Out] out IntPtr FrameRates);
         }
 
-        [ComVisible(true), ComImport(), Guid("31EFAC30-515C-11d0-A9AA-00AA0061BE93"), System.Security.SuppressUnmanagedCodeSecurity, InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("31EFAC30-515C-11d0-A9AA-00AA0061BE93")]
+        [System.Security.SuppressUnmanagedCodeSecurity]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IKsPropertySet
         {
             [PreserveSig]
-            int Set([In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet, [In] int dwPropID, [In] IntPtr pInstanceData, [In] int cbInstanceData, [In] IntPtr pPropData, [In] int cbPropData);
+            int Set([In] [MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet, [In] int dwPropID, [In] IntPtr pInstanceData, [In] int cbInstanceData, [In] IntPtr pPropData, [In] int cbPropData);
 
             [PreserveSig]
-            int Get([In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet, [In] int dwPropID, [In] IntPtr pInstanceData, [In] int cbInstanceData, [In, Out] IntPtr pPropData, [In] int cbPropData, [Out] out int pcbReturned);
+            int Get([In] [MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet, [In] int dwPropID, [In] IntPtr pInstanceData, [In] int cbInstanceData, [In] [Out] IntPtr pPropData, [In] int cbPropData,
+                    [Out] out int pcbReturned);
 
             [PreserveSig]
-            int QuerySupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet, [In] int dwPropID, [Out] out int pTypeSupport);
+            int QuerySupported([In] [MarshalAs(UnmanagedType.LPStruct)] Guid guidPropSet, [In] int dwPropID, [Out] out int pTypeSupport);
         }
 
-        [ComVisible(true), ComImport(), Guid("56a86895-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a86895-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IBaseFilter
         {
             // Inherits IPersist
@@ -1497,100 +1605,121 @@ namespace Umbral.payload.Handlers
             int Stop();
             int Pause();
             int Run(long tStart);
-            int GetState(int dwMilliSecsTimeout, [In, Out] ref int filtState);
+            int GetState(int dwMilliSecsTimeout, [In] [Out] ref int filtState);
             int SetSyncSource([In] IReferenceClock pClock);
-            int GetSyncSource([In, Out] ref IReferenceClock pClock);
+            int GetSyncSource([In] [Out] ref IReferenceClock pClock);
 
             // -----
-            int EnumPins([In, Out] ref IEnumPins ppEnum);
-            int FindPin([In, MarshalAs(UnmanagedType.LPWStr)] string Id, [In, Out] ref IPin ppPin);
+            int EnumPins([In] [Out] ref IEnumPins ppEnum);
+            int FindPin([In] [MarshalAs(UnmanagedType.LPWStr)] string Id, [In] [Out] ref IPin ppPin);
             int QueryFilterInfo([Out] FILTER_INFO pInfo);
-            int JoinFilterGraph([In] IFilterGraph pGraph, [In, MarshalAs(UnmanagedType.LPWStr)] string pName);
-            int QueryVendorInfo([In, Out, MarshalAs(UnmanagedType.LPWStr)] ref string pVendorInfo);
+            int JoinFilterGraph([In] IFilterGraph pGraph, [In] [MarshalAs(UnmanagedType.LPWStr)] string pName);
+            int QueryVendorInfo([In] [Out] [MarshalAs(UnmanagedType.LPWStr)] ref string pVendorInfo);
         }
 
 
         /// <summary>
         /// フィルタ グラフ内のフィルタを列挙するインタフェース.
         /// </summary>
-        [ComVisible(true), ComImport(), Guid("56a86893-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a86893-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IEnumFilters
         {
-            int Next([In] int cFilters, [In, Out] ref IBaseFilter ppFilter, [In, Out] ref int pcFetched);
+            int Next([In] int cFilters, [In] [Out] ref IBaseFilter ppFilter, [In] [Out] ref int pcFetched);
             int Skip([In] int cFilters);
             void Reset();
-            void Clone([In, Out] ref IEnumFilters ppEnum);
+            void Clone([In] [Out] ref IEnumFilters ppEnum);
         }
 
-        [ComVisible(true), ComImport(), Guid("C6E13340-30AC-11d0-A18C-00A0C9118956"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("C6E13340-30AC-11d0-A18C-00A0C9118956")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IAMStreamConfig
         {
-            int SetFormat([In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
-            int GetFormat([In, Out, MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppmt);
+            int SetFormat([In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int GetFormat([In] [Out] [MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppmt);
             int GetNumberOfCapabilities(ref int piCount, ref int piSize);
-            int GetStreamCaps(int iIndex, [In, Out, MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppmt, IntPtr pSCC);
+            int GetStreamCaps(int iIndex, [In] [Out] [MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppmt, IntPtr pSCC);
         }
 
-        [ComVisible(true), ComImport(), Guid("56a8689a-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a8689a-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IMediaSample
         {
             int GetPointer(ref IntPtr ppBuffer);
             int GetSize();
             int GetTime(ref long pTimeStart, ref long pTimeEnd);
-            int SetTime([In, MarshalAs(UnmanagedType.LPStruct)] UInt64 pTimeStart, [In, MarshalAs(UnmanagedType.LPStruct)] UInt64 pTimeEnd);
+            int SetTime([In] [MarshalAs(UnmanagedType.LPStruct)] ulong pTimeStart, [In] [MarshalAs(UnmanagedType.LPStruct)] ulong pTimeEnd);
             int IsSyncPoint();
-            int SetSyncPoint([In, MarshalAs(UnmanagedType.Bool)] bool bIsSyncPoint);
+            int SetSyncPoint([In] [MarshalAs(UnmanagedType.Bool)] bool bIsSyncPoint);
             int IsPreroll();
-            int SetPreroll([In, MarshalAs(UnmanagedType.Bool)] bool bIsPreroll);
+            int SetPreroll([In] [MarshalAs(UnmanagedType.Bool)] bool bIsPreroll);
             int GetActualDataLength();
             int SetActualDataLength(int len);
-            int GetMediaType([In, Out, MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppMediaType);
-            int SetMediaType([In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pMediaType);
+            int GetMediaType([In] [Out] [MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppMediaType);
+            int SetMediaType([In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pMediaType);
             int IsDiscontinuity();
-            int SetDiscontinuity([In, MarshalAs(UnmanagedType.Bool)] bool bDiscontinuity);
+            int SetDiscontinuity([In] [MarshalAs(UnmanagedType.Bool)] bool bDiscontinuity);
             int GetMediaTime(ref long pTimeStart, ref long pTimeEnd);
-            int SetMediaTime([In, MarshalAs(UnmanagedType.LPStruct)] UInt64 pTimeStart, [In, MarshalAs(UnmanagedType.LPStruct)] UInt64 pTimeEnd);
+            int SetMediaTime([In] [MarshalAs(UnmanagedType.LPStruct)] ulong pTimeStart, [In] [MarshalAs(UnmanagedType.LPStruct)] ulong pTimeEnd);
         }
 
-        [ComVisible(true), ComImport(), Guid("89c31040-846b-11ce-97d3-00aa0055595a"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("89c31040-846b-11ce-97d3-00aa0055595a")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IEnumMediaTypes
         {
-            int Next([In] int cMediaTypes, [In, Out, MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppMediaTypes, [In, Out] ref int pcFetched);
+            int Next([In] int cMediaTypes, [In] [Out] [MarshalAs(UnmanagedType.LPStruct)] ref AM_MEDIA_TYPE ppMediaTypes, [In] [Out] ref int pcFetched);
             int Skip([In] int cMediaTypes);
             int Reset();
-            int Clone([In, Out] ref IEnumMediaTypes ppEnum);
+            int Clone([In] [Out] ref IEnumMediaTypes ppEnum);
         }
 
-        [ComVisible(true), ComImport(), Guid("56a86891-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a86891-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IPin
         {
-            int Connect([In] IPin pReceivePin, [In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
-            int ReceiveConnection([In] IPin pReceivePin, [In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int Connect([In] IPin pReceivePin, [In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int ReceiveConnection([In] IPin pReceivePin, [In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
             int Disconnect();
-            int ConnectedTo([In, Out] ref IPin ppPin);
-            int ConnectionMediaType([Out, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int ConnectedTo([In] [Out] ref IPin ppPin);
+            int ConnectionMediaType([Out] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
             int QueryPinInfo([Out] PIN_INFO pInfo);
             int QueryDirection(ref PIN_DIRECTION pPinDir);
-            int QueryId([In, Out, MarshalAs(UnmanagedType.LPWStr)] ref string Id);
-            int QueryAccept([In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
-            int EnumMediaTypes([In, Out] ref IEnumMediaTypes ppEnum);
-            int QueryInternalConnections(IntPtr apPin, [In, Out] ref int nPin);
+            int QueryId([In] [Out] [MarshalAs(UnmanagedType.LPWStr)] ref string Id);
+            int QueryAccept([In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int EnumMediaTypes([In] [Out] ref IEnumMediaTypes ppEnum);
+            int QueryInternalConnections(IntPtr apPin, [In] [Out] ref int nPin);
             int EndOfStream();
             int BeginFlush();
             int EndFlush();
             int NewSegment(long tStart, long tStop, double dRate);
         }
 
-        [ComVisible(true), ComImport(), Guid("56a86892-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a86892-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IEnumPins
         {
-            int Next([In] int cPins, [In, Out] ref IPin ppPins, [In, Out] ref int pcFetched);
+            int Next([In] int cPins, [In] [Out] ref IPin ppPins, [In] [Out] ref int pcFetched);
             int Skip([In] int cPins);
             void Reset();
-            void Clone([In, Out] ref IEnumPins ppEnum);
+            void Clone([In] [Out] ref IEnumPins ppEnum);
         }
 
-        [ComVisible(true), ComImport(), Guid("56a86897-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a86897-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IReferenceClock
         {
             int GetTime(ref long pTime);
@@ -1599,36 +1728,49 @@ namespace Umbral.payload.Handlers
             int Unadvise(int dwAdviseCookie);
         }
 
-        [ComVisible(true), ComImport(), Guid("29840822-5B84-11D0-BD3B-00A0C911CE86"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("29840822-5B84-11D0-BD3B-00A0C911CE86")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface ICreateDevEnum
         {
-            int CreateClassEnumerator([In] ref Guid pType, [In, Out] ref System.Runtime.InteropServices.ComTypes.IEnumMoniker ppEnumMoniker, [In] int dwFlags);
+            int CreateClassEnumerator([In] ref Guid pType, [In] [Out] ref IEnumMoniker ppEnumMoniker, [In] int dwFlags);
         }
 
-        [ComVisible(true), ComImport(), Guid("55272A00-42CB-11CE-8135-00AA004BB851"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("55272A00-42CB-11CE-8135-00AA004BB851")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface IPropertyBag
         {
             int Read([MarshalAs(UnmanagedType.LPWStr)] string PropName, ref object Var, int ErrorLog);
             int Write(string PropName, ref object Var);
         }
 
-        [ComVisible(true), ComImport(), Guid("6B652FFF-11FE-4fce-92AD-0266B5D7C78F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("6B652FFF-11FE-4fce-92AD-0266B5D7C78F")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface ISampleGrabber
         {
-            int SetOneShot([In, MarshalAs(UnmanagedType.Bool)] bool OneShot);
-            int SetMediaType([In, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
-            int GetConnectedMediaType([Out, MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
-            int SetBufferSamples([In, MarshalAs(UnmanagedType.Bool)] bool BufferThem);
+            int SetOneShot([In] [MarshalAs(UnmanagedType.Bool)] bool OneShot);
+            int SetMediaType([In] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int GetConnectedMediaType([Out] [MarshalAs(UnmanagedType.LPStruct)] AM_MEDIA_TYPE pmt);
+            int SetBufferSamples([In] [MarshalAs(UnmanagedType.Bool)] bool BufferThem);
             int GetCurrentBuffer(ref int pBufferSize, IntPtr pBuffer);
             int GetCurrentSample(IntPtr ppSample);
             int SetCallback(ISampleGrabberCB pCallback, int WhichMethodToCallback);
         }
 
-        [ComVisible(true), ComImport(), Guid("0579154A-2B53-4994-B0D0-E773148EFF85"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("0579154A-2B53-4994-B0D0-E773148EFF85")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         public interface ISampleGrabberCB
         {
             [PreserveSig()]
             int SampleCB(double SampleTime, IMediaSample pSample);
+
             [PreserveSig()]
             int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen);
         }
@@ -1636,11 +1778,14 @@ namespace Umbral.payload.Handlers
         /// <summary>
         /// ビデオ ウィンドウのプロパティを設定するメソッドを提供するインタフェース.
         /// </summary>
-        [ComVisible(true), ComImport(), Guid("56a868b4-0ad4-11ce-b03a-0020af0ba770"), InterfaceType(ComInterfaceType.InterfaceIsDual)]
+        [ComVisible(true)]
+        [ComImport()]
+        [Guid("56a868b4-0ad4-11ce-b03a-0020af0ba770")]
+        [InterfaceType(ComInterfaceType.InterfaceIsDual)]
         public interface IVideoWindow
         {
             int put_Caption(string caption);
-            int get_Caption([In, Out] ref string caption);
+            int get_Caption([In] [Out] ref string caption);
             int put_WindowStyle(int windowStyle);
             int get_WindowStyle(ref int windowStyle);
             int put_WindowStyleEx(int windowStyleEx);
@@ -1686,7 +1831,8 @@ namespace Umbral.payload.Handlers
         #region Structure
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential)]
+        [ComVisible(false)]
         public class AM_MEDIA_TYPE
         {
             public Guid MajorType;
@@ -1703,7 +1849,8 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [ComVisible(false)]
         public class FILTER_INFO
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
@@ -1713,7 +1860,8 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [ComVisible(false)]
         public class PIN_INFO
         {
             public IBaseFilter pFilter;
@@ -1723,7 +1871,8 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential, Pack = 8), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential, Pack = 8)]
+        [ComVisible(false)]
         public struct VIDEO_STREAM_CONFIG_CAPS
         {
             public Guid Guid;
@@ -1750,7 +1899,8 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential)]
+        [ComVisible(false)]
         public struct VIDEOINFOHEADER
         {
             public RECT SrcRect;
@@ -1762,7 +1912,8 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential)]
+        [ComVisible(false)]
         public struct VIDEOINFOHEADER2
         {
             public RECT SrcRect;
@@ -1780,7 +1931,8 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential, Pack = 2), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        [ComVisible(false)]
         public struct BITMAPINFOHEADER
         {
             public int biSize;
@@ -1797,7 +1949,8 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential)]
+        [ComVisible(false)]
         public struct WAVEFORMATEX
         {
             public ushort wFormatTag;
@@ -1810,24 +1963,35 @@ namespace Umbral.payload.Handlers
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential, Pack = 8), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential, Pack = 8)]
+        [ComVisible(false)]
         public struct SIZE
         {
             public int cx;
             public int cy;
-            public override string ToString() { return string.Format("{{{0}, {1}}}", cx, cy); } // for debugging.
+
+            public override string ToString()
+            {
+                return string.Format("{{{0}, {1}}}", cx, cy);
+            } // for debugging.
         }
 
         [Serializable]
-        [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+        [StructLayout(LayoutKind.Sequential)]
+        [ComVisible(false)]
         public struct RECT
         {
             public int Left;
             public int Top;
             public int Right;
             public int Bottom;
-            public override string ToString() { return string.Format("{{{0}, {1}, {2}, {3}}}", Left, Top, Right, Bottom); } // for debugging.
+
+            public override string ToString()
+            {
+                return string.Format("{{{0}, {1}, {2}, {3}}}", Left, Top, Right, Bottom);
+            } // for debugging.
         }
+
         #endregion
 
 
@@ -1837,7 +2001,7 @@ namespace Umbral.payload.Handlers
         public enum PIN_DIRECTION
         {
             PINDIR_INPUT = 0,
-            PINDIR_OUTPUT = 1,
+            PINDIR_OUTPUT = 1
         }
 
         [ComVisible(false)]
@@ -1845,7 +2009,7 @@ namespace Umbral.payload.Handlers
         {
             Stopped = 0,
             Paused = 1,
-            Running = 2,
+            Running = 2
         }
 
         [ComVisible(false)]
@@ -1857,14 +2021,15 @@ namespace Umbral.payload.Handlers
             Zoom = 3,
             Exposure = 4,
             Iris = 5,
-            Focus = 6,
+            Focus = 6
         }
 
-        [ComVisible(false), Flags()]
+        [ComVisible(false)]
+        [Flags()]
         public enum CameraControlFlags
         {
             Auto = 0x0001,
-            Manual = 0x0002,
+            Manual = 0x0002
         }
 
         [ComVisible(false)]
@@ -1889,7 +2054,8 @@ namespace Umbral.payload.Handlers
             Medium
         }
 
-        [ComVisible(false), Flags()]
+        [ComVisible(false)]
+        [Flags()]
         public enum VideoControlFlags
         {
             FlipHorizontal = 0x01,
@@ -1897,6 +2063,7 @@ namespace Umbral.payload.Handlers
             ExternalTriggerEnable = 0x04,
             Trigger = 0x08
         }
+
         #endregion
 
 
@@ -1955,7 +2122,7 @@ namespace Umbral.payload.Handlers
 
             public static readonly Guid AMPROPSETID_PIN = new Guid("9b00f101-1567-11d1-b3f1-00aa003761c5");
 
-            private static Dictionary<Guid, string> NicknameCache = null;
+            static private Dictionary<Guid, string> NicknameCache = null;
 
             /// <summary>
             /// Guidをわかりやすい文字列で返す。
@@ -1973,15 +2140,15 @@ namespace Umbral.payload.Handlers
 
                 if (NicknameCache.ContainsKey(guid))
                 {
-                    var name = NicknameCache[guid];
-                    var elem = name.Split('_');
+                    string name = NicknameCache[guid];
+                    string[] elem = name.Split('_');
 
                     // '_'で分割して、2個目以降を連結する。
                     // MEDIATYPE_Videoなら[Video]を返す。
                     // PIN_CATEGORY_CAPTUREなら[CATEGORY_CAPTURE]を返す。
                     if (elem.Length >= 2)
                     {
-                        var text = string.Join("_", elem.Skip(1).ToArray());
+                        string text = string.Join("_", elem.Skip(1).ToArray());
                         return string.Format("[{0}]", text);
                     }
                     else
@@ -1994,6 +2161,8 @@ namespace Umbral.payload.Handlers
                 return guid.ToString();
             }
         }
+
         #endregion
+
     }
 }

@@ -18,7 +18,7 @@ namespace Umbral.payload.SystemInfo
     {
         internal static async Task<IpFormat> GetInfo()
         {
-            using (var client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
                 string content = await client.GetStringAsync("http://ip-api.com/json/?fields=225545");
                 dynamic jsonContent = SimpleJson.DeserializeObject(content);

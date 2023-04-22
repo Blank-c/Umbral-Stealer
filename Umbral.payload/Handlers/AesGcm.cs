@@ -3,11 +3,10 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 
-
 namespace Umbral.payload.Handlers
 {
     //AES GCM from https://github.com/dvsekhvalnov/jose-jwt
-    class AesGcm
+    internal class AesGcm
     {
         public byte[] Decrypt(byte[] key, byte[] iv, byte[] aad, byte[] cipherText, byte[] authTag)
         {
@@ -16,7 +15,7 @@ namespace Umbral.payload.Handlers
 
             byte[] plainText;
 
-            var authInfo = new BCrypt.BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO(iv, aad, authTag);
+            BCrypt.BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO authInfo = new BCrypt.BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO(iv, aad, authTag);
             using (authInfo)
             {
                 byte[] ivData = new byte[MaxAuthTagSize(hAlg)];

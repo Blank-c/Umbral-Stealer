@@ -12,7 +12,7 @@ namespace Umbral.builder
         }
 
         [DllImport("DwmApi")] //System.Runtime.InteropServices
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] attrValue, int attrSize);
+        static extern private int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] attrValue, int attrSize);
 
         protected override void OnHandleCreated(EventArgs e)
         {
@@ -22,7 +22,7 @@ namespace Umbral.builder
 
         private void GeneralTabButton_Click(object sender, EventArgs e)
         {
-            
+
             assemblyTab.Hide();
             builderTab.Hide();
             aboutTab.Hide();

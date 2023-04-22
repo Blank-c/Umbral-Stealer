@@ -1,528 +1,536 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    <!-- 
+      Microsoft ResX Schema 
+      
+      Version 2.0
+      
+      The primary goals of this format is to allow a simple XML format 
+      that is mostly human readable. The generation and parsing of the 
+      various data types are done through the TypeConverter classes 
+      associated with the data types.
+      
+      Example:
+      
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+                  
+      There are any number of "resheader" rows that contain simple 
+      name/value pairs.
+      
+      Each data row contains a name, and value. The row also contains a 
+      type or mimetype. Type corresponds to a .NET class that support 
+      text/value conversion through the TypeConverter architecture. 
+      Classes that don't support this are serialized and stored with the 
+      mimetype set.
+      
+      The mimetype is used for serialized objects, and tells the 
+      ResXResourceReader how to depersist the object. This is currently not 
+      extensible. For a given mimetype the value must be set accordingly:
+      
+      Note - application/x-microsoft.net.object.binary.base64 is the format 
+      that the ResXResourceWriter will generate, however the reader can 
+      read any of the formats listed below.
+      
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+      
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with 
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+  
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array 
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <assembly alias="System.Windows.Forms"
+              name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+    <data name="AboutTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Top</value>
     </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
+    <data name="AboutTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+        <value>Flat</value>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AboutTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="AboutTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="AboutTabButton.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
-  </data>
-  <data name="AboutTabButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 1</value>
-  </data>
-  <data name="AboutTabButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 95</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AboutTabButton.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="AboutTabButton.Text" xml:space="preserve">
+    <assembly alias="System.Drawing"
+              name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+    <data name="AboutTabButton.Font" type="System.Drawing.Font, System.Drawing">
+        <value>Microsoft Sans Serif, 12pt</value>
+    </data>
+    <data name="AboutTabButton.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 1</value>
+    </data>
+    <data name="AboutTabButton.Size" type="System.Drawing.Size, System.Drawing">
+        <value>219, 95</value>
+    </data>
+    <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+    <data name="AboutTabButton.TabIndex" type="System.Int32, mscorlib">
+        <value>3</value>
+    </data>
+    <data name="AboutTabButton.Text" xml:space="preserve">
     <value>About</value>
   </data>
-  <data name="&gt;&gt;AboutTabButton.Name" xml:space="preserve">
+    <data name="&gt;&gt;AboutTabButton.Name" xml:space="preserve">
     <value>AboutTabButton</value>
   </data>
-  <data name="&gt;&gt;AboutTabButton.Type" xml:space="preserve">
+    <data name="&gt;&gt;AboutTabButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;AboutTabButton.Parent" xml:space="preserve">
+    <data name="&gt;&gt;AboutTabButton.Parent" xml:space="preserve">
     <value>panel1</value>
   </data>
-  <data name="&gt;&gt;AboutTabButton.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;AboutTabButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="SoonTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Bottom</value>
-  </data>
-  <data name="SoonTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="SoonTabButton.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
-  </data>
-  <data name="SoonTabButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 95</value>
-  </data>
-  <data name="SoonTabButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 95</value>
-  </data>
-  <data name="SoonTabButton.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="SoonTabButton.Text" xml:space="preserve">
+    <data name="SoonTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Bottom</value>
+    </data>
+    <data name="SoonTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+        <value>Flat</value>
+    </data>
+    <data name="SoonTabButton.Font" type="System.Drawing.Font, System.Drawing">
+        <value>Microsoft Sans Serif, 12pt</value>
+    </data>
+    <data name="SoonTabButton.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 95</value>
+    </data>
+    <data name="SoonTabButton.Size" type="System.Drawing.Size, System.Drawing">
+        <value>219, 95</value>
+    </data>
+    <data name="SoonTabButton.TabIndex" type="System.Int32, mscorlib">
+        <value>2</value>
+    </data>
+    <data name="SoonTabButton.Text" xml:space="preserve">
     <value>Soon...</value>
   </data>
-  <data name="&gt;&gt;SoonTabButton.Name" xml:space="preserve">
+    <data name="&gt;&gt;SoonTabButton.Name" xml:space="preserve">
     <value>SoonTabButton</value>
   </data>
-  <data name="&gt;&gt;SoonTabButton.Type" xml:space="preserve">
+    <data name="&gt;&gt;SoonTabButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;SoonTabButton.Parent" xml:space="preserve">
+    <data name="&gt;&gt;SoonTabButton.Parent" xml:space="preserve">
     <value>panel1</value>
   </data>
-  <data name="&gt;&gt;SoonTabButton.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;SoonTabButton.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="label1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 1</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <data name="label1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Top</value>
+    </data>
+    <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 0</value>
+    </data>
+    <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+        <value>219, 1</value>
+    </data>
+    <data name="label1.TabIndex" type="System.Int32, mscorlib">
+        <value>0</value>
+    </data>
+    <data name="&gt;&gt;label1.Name" xml:space="preserve">
     <value>label1</value>
   </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <data name="&gt;&gt;label1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <data name="&gt;&gt;label1.Parent" xml:space="preserve">
     <value>panel1</value>
   </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 285</value>
-  </data>
-  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 190</value>
-  </data>
-  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+    <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Fill</value>
+    </data>
+    <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 285</value>
+    </data>
+    <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+        <value>219, 190</value>
+    </data>
+    <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+        <value>3</value>
+    </data>
+    <data name="&gt;&gt;panel1.Name" xml:space="preserve">
     <value>panel1</value>
   </data>
-  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+    <data name="&gt;&gt;panel1.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+    <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
     <value>MenuPanel</value>
   </data>
-  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="BuilderTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="BuilderTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="BuilderTabButton.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
-  </data>
-  <data name="BuilderTabButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 190</value>
-  </data>
-  <data name="BuilderTabButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 95</value>
-  </data>
-  <data name="BuilderTabButton.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="BuilderTabButton.Text" xml:space="preserve">
+    <data name="BuilderTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Top</value>
+    </data>
+    <data name="BuilderTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+        <value>Flat</value>
+    </data>
+    <data name="BuilderTabButton.Font" type="System.Drawing.Font, System.Drawing">
+        <value>Microsoft Sans Serif, 12pt</value>
+    </data>
+    <data name="BuilderTabButton.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 190</value>
+    </data>
+    <data name="BuilderTabButton.Size" type="System.Drawing.Size, System.Drawing">
+        <value>219, 95</value>
+    </data>
+    <data name="BuilderTabButton.TabIndex" type="System.Int32, mscorlib">
+        <value>2</value>
+    </data>
+    <data name="BuilderTabButton.Text" xml:space="preserve">
     <value>Builder</value>
   </data>
-  <data name="&gt;&gt;BuilderTabButton.Name" xml:space="preserve">
+    <data name="&gt;&gt;BuilderTabButton.Name" xml:space="preserve">
     <value>BuilderTabButton</value>
   </data>
-  <data name="&gt;&gt;BuilderTabButton.Type" xml:space="preserve">
+    <data name="&gt;&gt;BuilderTabButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;BuilderTabButton.Parent" xml:space="preserve">
+    <data name="&gt;&gt;BuilderTabButton.Parent" xml:space="preserve">
     <value>MenuPanel</value>
   </data>
-  <data name="&gt;&gt;BuilderTabButton.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;BuilderTabButton.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="AssemblyTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="AssemblyTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="AssemblyTabButton.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
-  </data>
-  <data name="AssemblyTabButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 95</value>
-  </data>
-  <data name="AssemblyTabButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 95</value>
-  </data>
-  <data name="AssemblyTabButton.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="AssemblyTabButton.Text" xml:space="preserve">
+    <data name="AssemblyTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Top</value>
+    </data>
+    <data name="AssemblyTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+        <value>Flat</value>
+    </data>
+    <data name="AssemblyTabButton.Font" type="System.Drawing.Font, System.Drawing">
+        <value>Microsoft Sans Serif, 12pt</value>
+    </data>
+    <data name="AssemblyTabButton.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 95</value>
+    </data>
+    <data name="AssemblyTabButton.Size" type="System.Drawing.Size, System.Drawing">
+        <value>219, 95</value>
+    </data>
+    <data name="AssemblyTabButton.TabIndex" type="System.Int32, mscorlib">
+        <value>1</value>
+    </data>
+    <data name="AssemblyTabButton.Text" xml:space="preserve">
     <value>Assembly</value>
   </data>
-  <data name="&gt;&gt;AssemblyTabButton.Name" xml:space="preserve">
+    <data name="&gt;&gt;AssemblyTabButton.Name" xml:space="preserve">
     <value>AssemblyTabButton</value>
   </data>
-  <data name="&gt;&gt;AssemblyTabButton.Type" xml:space="preserve">
+    <data name="&gt;&gt;AssemblyTabButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;AssemblyTabButton.Parent" xml:space="preserve">
+    <data name="&gt;&gt;AssemblyTabButton.Parent" xml:space="preserve">
     <value>MenuPanel</value>
   </data>
-  <data name="&gt;&gt;AssemblyTabButton.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;AssemblyTabButton.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="GeneralTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="GeneralTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="GeneralTabButton.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
-  </data>
-  <data name="GeneralTabButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="GeneralTabButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 95</value>
-  </data>
-  <data name="GeneralTabButton.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="GeneralTabButton.Text" xml:space="preserve">
+    <data name="GeneralTabButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Top</value>
+    </data>
+    <data name="GeneralTabButton.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+        <value>Flat</value>
+    </data>
+    <data name="GeneralTabButton.Font" type="System.Drawing.Font, System.Drawing">
+        <value>Microsoft Sans Serif, 12pt</value>
+    </data>
+    <data name="GeneralTabButton.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 0</value>
+    </data>
+    <data name="GeneralTabButton.Size" type="System.Drawing.Size, System.Drawing">
+        <value>219, 95</value>
+    </data>
+    <data name="GeneralTabButton.TabIndex" type="System.Int32, mscorlib">
+        <value>0</value>
+    </data>
+    <data name="GeneralTabButton.Text" xml:space="preserve">
     <value>General</value>
   </data>
-  <data name="&gt;&gt;GeneralTabButton.Name" xml:space="preserve">
+    <data name="&gt;&gt;GeneralTabButton.Name" xml:space="preserve">
     <value>GeneralTabButton</value>
   </data>
-  <data name="&gt;&gt;GeneralTabButton.Type" xml:space="preserve">
+    <data name="&gt;&gt;GeneralTabButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;GeneralTabButton.Parent" xml:space="preserve">
+    <data name="&gt;&gt;GeneralTabButton.Parent" xml:space="preserve">
     <value>MenuPanel</value>
   </data>
-  <data name="&gt;&gt;GeneralTabButton.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;GeneralTabButton.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="MenuPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Left</value>
-  </data>
-  <data name="MenuPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="MenuPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 477</value>
-  </data>
-  <data name="MenuPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;MenuPanel.Name" xml:space="preserve">
+    <data name="MenuPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Left</value>
+    </data>
+    <data name="MenuPanel.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 0</value>
+    </data>
+    <data name="MenuPanel.Size" type="System.Drawing.Size, System.Drawing">
+        <value>221, 477</value>
+    </data>
+    <data name="MenuPanel.TabIndex" type="System.Int32, mscorlib">
+        <value>0</value>
+    </data>
+    <data name="&gt;&gt;MenuPanel.Name" xml:space="preserve">
     <value>MenuPanel</value>
   </data>
-  <data name="&gt;&gt;MenuPanel.Type" xml:space="preserve">
+    <data name="&gt;&gt;MenuPanel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;MenuPanel.Parent" xml:space="preserve">
+    <data name="&gt;&gt;MenuPanel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;MenuPanel.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;MenuPanel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="DropperTab.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, -1</value>
-  </data>
-  <data name="DropperTab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>667, 477</value>
-  </data>
-  <data name="DropperTab.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;DropperTab.Name" xml:space="preserve">
+    <data name="DropperTab.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, -1</value>
+    </data>
+    <data name="DropperTab.Size" type="System.Drawing.Size, System.Drawing">
+        <value>667, 477</value>
+    </data>
+    <data name="DropperTab.TabIndex" type="System.Int32, mscorlib">
+        <value>4</value>
+    </data>
+    <data name="&gt;&gt;DropperTab.Name" xml:space="preserve">
     <value>DropperTab</value>
   </data>
-  <data name="&gt;&gt;DropperTab.Type" xml:space="preserve">
+    <data name="&gt;&gt;DropperTab.Type" xml:space="preserve">
     <value>Umbral.builder.User_Controls.Soon, Umbral Builder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;DropperTab.Parent" xml:space="preserve">
+    <data name="&gt;&gt;DropperTab.Parent" xml:space="preserve">
     <value>FrontPanel</value>
   </data>
-  <data name="&gt;&gt;DropperTab.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;DropperTab.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="aboutTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="aboutTab.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="aboutTab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>665, 475</value>
-  </data>
-  <data name="aboutTab.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;aboutTab.Name" xml:space="preserve">
+    <data name="aboutTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Fill</value>
+    </data>
+    <data name="aboutTab.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 0</value>
+    </data>
+    <data name="aboutTab.Size" type="System.Drawing.Size, System.Drawing">
+        <value>665, 475</value>
+    </data>
+    <data name="aboutTab.TabIndex" type="System.Int32, mscorlib">
+        <value>3</value>
+    </data>
+    <data name="&gt;&gt;aboutTab.Name" xml:space="preserve">
     <value>aboutTab</value>
   </data>
-  <data name="&gt;&gt;aboutTab.Type" xml:space="preserve">
+    <data name="&gt;&gt;aboutTab.Type" xml:space="preserve">
     <value>Umbral.builder.User_Controls.AboutTab, Umbral Builder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;aboutTab.Parent" xml:space="preserve">
+    <data name="&gt;&gt;aboutTab.Parent" xml:space="preserve">
     <value>FrontPanel</value>
   </data>
-  <data name="&gt;&gt;aboutTab.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;aboutTab.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="builderTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="builderTab.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="builderTab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>665, 475</value>
-  </data>
-  <data name="builderTab.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;builderTab.Name" xml:space="preserve">
+    <data name="builderTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Fill</value>
+    </data>
+    <data name="builderTab.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 0</value>
+    </data>
+    <data name="builderTab.Size" type="System.Drawing.Size, System.Drawing">
+        <value>665, 475</value>
+    </data>
+    <data name="builderTab.TabIndex" type="System.Int32, mscorlib">
+        <value>2</value>
+    </data>
+    <data name="&gt;&gt;builderTab.Name" xml:space="preserve">
     <value>builderTab</value>
   </data>
-  <data name="&gt;&gt;builderTab.Type" xml:space="preserve">
+    <data name="&gt;&gt;builderTab.Type" xml:space="preserve">
     <value>Umbral.builder.User_Controls.BuilderTab, Umbral Builder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;builderTab.Parent" xml:space="preserve">
+    <data name="&gt;&gt;builderTab.Parent" xml:space="preserve">
     <value>FrontPanel</value>
   </data>
-  <data name="&gt;&gt;builderTab.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;builderTab.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="assemblyTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="assemblyTab.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="assemblyTab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>665, 475</value>
-  </data>
-  <data name="assemblyTab.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;assemblyTab.Name" xml:space="preserve">
+    <data name="assemblyTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Fill</value>
+    </data>
+    <data name="assemblyTab.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 0</value>
+    </data>
+    <data name="assemblyTab.Size" type="System.Drawing.Size, System.Drawing">
+        <value>665, 475</value>
+    </data>
+    <data name="assemblyTab.TabIndex" type="System.Int32, mscorlib">
+        <value>1</value>
+    </data>
+    <data name="&gt;&gt;assemblyTab.Name" xml:space="preserve">
     <value>assemblyTab</value>
   </data>
-  <data name="&gt;&gt;assemblyTab.Type" xml:space="preserve">
+    <data name="&gt;&gt;assemblyTab.Type" xml:space="preserve">
     <value>Umbral.builder.User_Controls.AssemblyTab, Umbral Builder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;assemblyTab.Parent" xml:space="preserve">
+    <data name="&gt;&gt;assemblyTab.Parent" xml:space="preserve">
     <value>FrontPanel</value>
   </data>
-  <data name="&gt;&gt;assemblyTab.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;assemblyTab.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="generalTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="generalTab.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="generalTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
-  </data>
-  <data name="generalTab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>665, 475</value>
-  </data>
-  <data name="generalTab.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;generalTab.Name" xml:space="preserve">
+    <data name="generalTab.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Fill</value>
+    </data>
+    <data name="generalTab.Location" type="System.Drawing.Point, System.Drawing">
+        <value>0, 0</value>
+    </data>
+    <data name="generalTab.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+        <value>3, 4, 3, 4</value>
+    </data>
+    <data name="generalTab.Size" type="System.Drawing.Size, System.Drawing">
+        <value>665, 475</value>
+    </data>
+    <data name="generalTab.TabIndex" type="System.Int32, mscorlib">
+        <value>0</value>
+    </data>
+    <data name="&gt;&gt;generalTab.Name" xml:space="preserve">
     <value>generalTab</value>
   </data>
-  <data name="&gt;&gt;generalTab.Type" xml:space="preserve">
+    <data name="&gt;&gt;generalTab.Type" xml:space="preserve">
     <value>Umbral.builder.User_Controls.GeneralTab, Umbral Builder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;generalTab.Parent" xml:space="preserve">
+    <data name="&gt;&gt;generalTab.Parent" xml:space="preserve">
     <value>FrontPanel</value>
   </data>
-  <data name="&gt;&gt;generalTab.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;generalTab.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="FrontPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="FrontPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>221, 0</value>
-  </data>
-  <data name="FrontPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>667, 477</value>
-  </data>
-  <data name="FrontPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;FrontPanel.Name" xml:space="preserve">
+    <data name="FrontPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+        <value>Fill</value>
+    </data>
+    <data name="FrontPanel.Location" type="System.Drawing.Point, System.Drawing">
+        <value>221, 0</value>
+    </data>
+    <data name="FrontPanel.Size" type="System.Drawing.Size, System.Drawing">
+        <value>667, 477</value>
+    </data>
+    <data name="FrontPanel.TabIndex" type="System.Int32, mscorlib">
+        <value>1</value>
+    </data>
+    <data name="&gt;&gt;FrontPanel.Name" xml:space="preserve">
     <value>FrontPanel</value>
   </data>
-  <data name="&gt;&gt;FrontPanel.Type" xml:space="preserve">
+    <data name="&gt;&gt;FrontPanel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;FrontPanel.Parent" xml:space="preserve">
+    <data name="&gt;&gt;FrontPanel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;FrontPanel.ZOrder" xml:space="preserve">
+    <data name="&gt;&gt;FrontPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>888, 477</value>
-  </data>
-  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>908, 520</value>
-  </data>
-  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterScreen</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
+    <metadata name="$this.Localizable"
+              type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+        <value>True</value>
+    </metadata>
+    <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+        <value>6, 13</value>
+    </data>
+    <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+        <value>888, 477</value>
+    </data>
+    <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+        <value>908, 520</value>
+    </data>
+    <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+        <value>CenterScreen</value>
+    </data>
+    <data name="$this.Text" xml:space="preserve">
     <value>Umbral Stealer (Builder)</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainForm</value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

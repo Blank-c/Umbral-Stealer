@@ -25,6 +25,59 @@ namespace Umbral.payload.Handlers
 
         public static readonly uint STATUS_AUTH_TAG_MISMATCH = 0xC000A002;
 
+        [DllImport("bcrypt.dll")]
+        public static extern uint BCryptOpenAlgorithmProvider(out IntPtr phAlgorithm,
+                                                              [MarshalAs(UnmanagedType.LPWStr)] string pszAlgId,
+                                                              [MarshalAs(UnmanagedType.LPWStr)] string pszImplementation,
+                                                              uint dwFlags);
+
+        [DllImport("bcrypt.dll")]
+        public static extern uint BCryptCloseAlgorithmProvider(IntPtr hAlgorithm, uint flags);
+
+        [DllImport("bcrypt.dll", EntryPoint = "BCryptGetProperty")]
+        public static extern uint BCryptGetProperty(IntPtr hObject, [MarshalAs(UnmanagedType.LPWStr)] string pszProperty, byte[] pbOutput, int cbOutput, ref int pcbResult, uint flags);
+
+        [DllImport("bcrypt.dll", EntryPoint = "BCryptSetProperty")]
+        internal static extern uint BCryptSetAlgorithmProperty(IntPtr hObject, [MarshalAs(UnmanagedType.LPWStr)] string pszProperty, byte[] pbInput, int cbInput, int dwFlags);
+
+
+        [DllImport("bcrypt.dll")]
+        public static extern uint BCryptImportKey(IntPtr hAlgorithm,
+                                                  IntPtr hImportKey,
+                                                  [MarshalAs(UnmanagedType.LPWStr)] string pszBlobType,
+                                                  out IntPtr phKey,
+                                                  IntPtr pbKeyObject,
+                                                  int cbKeyObject,
+                                                  byte[] pbInput, //blob of type BCRYPT_KEY_DATA_BLOB + raw key data = (dwMagic (4 bytes) | uint dwVersion (4 bytes) | cbKeyData (4 bytes) | data)
+                                                  int cbInput,
+                                                  uint dwFlags);
+
+        [DllImport("bcrypt.dll")]
+        public static extern uint BCryptDestroyKey(IntPtr hKey);
+
+        [DllImport("bcrypt.dll")]
+        public static extern uint BCryptEncrypt(IntPtr hKey,
+                                                byte[] pbInput,
+                                                int cbInput,
+                                                ref BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo,
+                                                byte[] pbIV, int cbIV,
+                                                byte[] pbOutput,
+                                                int cbOutput,
+                                                ref int pcbResult,
+                                                uint dwFlags);
+
+        [DllImport("bcrypt.dll")]
+        internal static extern uint BCryptDecrypt(IntPtr hKey,
+                                                  byte[] pbInput,
+                                                  int cbInput,
+                                                  ref BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo,
+                                                  byte[] pbIV,
+                                                  int cbIV,
+                                                  byte[] pbOutput,
+                                                  int cbOutput,
+                                                  ref int pcbResult,
+                                                  int dwFlags);
+
         [StructLayout(LayoutKind.Sequential)]
         public struct BCRYPT_PSS_PADDING_INFO
         {
@@ -118,59 +171,6 @@ namespace Umbral.payload.Handlers
             public IntPtr pbLabel;
             public int cbLabel;
         }
-
-        [DllImport("bcrypt.dll")]
-        public static extern uint BCryptOpenAlgorithmProvider(out IntPtr phAlgorithm,
-                                                              [MarshalAs(UnmanagedType.LPWStr)] string pszAlgId,
-                                                              [MarshalAs(UnmanagedType.LPWStr)] string pszImplementation,
-                                                              uint dwFlags);
-
-        [DllImport("bcrypt.dll")]
-        public static extern uint BCryptCloseAlgorithmProvider(IntPtr hAlgorithm, uint flags);
-
-        [DllImport("bcrypt.dll", EntryPoint = "BCryptGetProperty")]
-        public static extern uint BCryptGetProperty(IntPtr hObject, [MarshalAs(UnmanagedType.LPWStr)] string pszProperty, byte[] pbOutput, int cbOutput, ref int pcbResult, uint flags);
-
-        [DllImport("bcrypt.dll", EntryPoint = "BCryptSetProperty")]
-        internal static extern uint BCryptSetAlgorithmProperty(IntPtr hObject, [MarshalAs(UnmanagedType.LPWStr)] string pszProperty, byte[] pbInput, int cbInput, int dwFlags);
-
-
-        [DllImport("bcrypt.dll")]
-        public static extern uint BCryptImportKey(IntPtr hAlgorithm,
-                                                         IntPtr hImportKey,
-                                                         [MarshalAs(UnmanagedType.LPWStr)] string pszBlobType,
-                                                         out IntPtr phKey,
-                                                         IntPtr pbKeyObject,
-                                                         int cbKeyObject,
-                                                         byte[] pbInput, //blob of type BCRYPT_KEY_DATA_BLOB + raw key data = (dwMagic (4 bytes) | uint dwVersion (4 bytes) | cbKeyData (4 bytes) | data)
-                                                         int cbInput,
-                                                         uint dwFlags);
-
-        [DllImport("bcrypt.dll")]
-        public static extern uint BCryptDestroyKey(IntPtr hKey);
-
-        [DllImport("bcrypt.dll")]
-        public static extern uint BCryptEncrypt(IntPtr hKey,
-                                                byte[] pbInput,
-                                                int cbInput,
-                                                ref BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo,
-                                                byte[] pbIV, int cbIV,
-                                                byte[] pbOutput,
-                                                int cbOutput,
-                                                ref int pcbResult,
-                                                uint dwFlags);
-
-        [DllImport("bcrypt.dll")]
-        internal static extern uint BCryptDecrypt(IntPtr hKey,
-                                                  byte[] pbInput,
-                                                  int cbInput,
-                                                  ref BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO pPaddingInfo,
-                                                  byte[] pbIV,
-                                                  int cbIV,
-                                                  byte[] pbOutput,
-                                                  int cbOutput,
-                                                  ref int pcbResult,
-                                                  int dwFlags);
     }
 
 }

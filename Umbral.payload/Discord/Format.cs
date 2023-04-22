@@ -23,7 +23,7 @@
         internal readonly GiftFormat[] Gift;
 
         internal DiscordAccountFormat(string username, string userId, bool mfa, string email, string phoneNumber,
-            bool verified, string nitro, string[] billingType, string token, GiftFormat[] gifts)
+                                      bool verified, string nitro, string[] billingType, string token, GiftFormat[] gifts)
         {
             Username = username;
             UserId = userId;

