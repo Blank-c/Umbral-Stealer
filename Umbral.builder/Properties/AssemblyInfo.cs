@@ -1,15 +1,16 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Umbral Builder")]
+[assembly: AssemblyTitle("Umbral.builder")]
 [assembly: AssemblyDescription("Builder for Umbral Stealer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Umbral Builder")]
-[assembly: AssemblyCopyright("Copyright © 2023 Blank-c")]
+[assembly: AssemblyProduct("Umbral.builder")]
+[assembly: AssemblyCopyright("Copyright © Blank-c 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("41a2ad95-749b-4c06-8711-caab7c5db3bc")]
+[assembly: Guid("c8bb4bc3-944b-43a1-8a0c-e2a258dc190f")]
 
 // Version information for an assembly consists of the following four values:
 //

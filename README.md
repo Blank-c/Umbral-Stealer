@@ -22,7 +22,10 @@ The author of this program is not liable for any damage, harm, or legal conseque
 - Captures Webcam Photos.
 - Captures IP Address.
 - Captures Screenshot(s) of All Monitors.
-- Add to Startup.
+- Captures Wallets.
+- Captures Telegram Sessions.
+- Blocks AV Sites (Buggy).
+- Adds itself to Startup.
 - Anti-Virtual Machine.
 - Obfuscation.
 - Self Destruct.
